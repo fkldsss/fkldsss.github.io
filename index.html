@@ -628,6 +628,12 @@ function selectSticker(element) {
         }
 
 window.createSticker = function createSticker(content, category, isImage) {
+    if (content === 'solid') {
+        const existingSolid = document.querySelector('.sticker[data-text-content="solid"]');
+        if (existingSolid) {
+            existingSolid.remove();
+        }
+    }
     stickerCount++;
     const newSticker = document.createElement('div');
     newSticker.className = 'sticker';
