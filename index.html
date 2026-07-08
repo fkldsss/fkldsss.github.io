@@ -572,6 +572,15 @@ function selectSticker(element) {
 
         function deleteSelectedSticker() {
             if (selectedSticker) {
+        if (selectedSticker.classList.contains('locked')) {
+            selectedSticker.style.transition = 'transform 0.1s ease';
+            selectedSticker.style.outline = '4px solid #ff5252';
+            setTimeout(() => {
+                selectedSticker.style.outline = 'none';
+            }, 200);
+            
+            return;
+        }
                 selectedSticker.remove();
                 window.clearSelection();
             }
