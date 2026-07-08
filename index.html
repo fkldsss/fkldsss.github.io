@@ -392,8 +392,8 @@
         }
 .color-handle {
     position: absolute;
-    bottom: 45px;
-    left: 44px;
+    bottom: 85px;
+    left: 50px;
     width: 32px;
     height: 32px;
     background: rgba(255, 255, 255, 0.8);
@@ -685,28 +685,27 @@ window.createSticker = function createSticker(content, category, isImage) {
         };
         newSticker.appendChild(expandBtn);
 
-        if (content === 'solid') {
+            if (content === 'solid') {
             newSticker.style.width = '100vw';
             newSticker.style.height = '100vh';
             newSticker.style.backgroundColor = '#ffffff';
+            newSticker.style.left = '50%';
+            newSticker.style.top = '50%';
+            newSticker.style.transform = 'translate(-50%, -50%)';
+            newSticker.classList.add('locked');
+            window.clearSelection();
+
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
             colorInput.className = 'hidden-color-picker';
             colorInput.style.display = 'none'; 
             colorInput.value = '#ffffff';
+
             const colorBtn = document.createElement('div');
-            colorBtn.className = 'color-handle'; // 您可以在 CSS 設定此 class 的樣式
+            colorBtn.className = 'color-handle';
             colorBtn.innerHTML = '🎨';
             colorBtn.onclick = function(e) {
                 e.stopPropagation();
-            newSticker.style.width = '100vw';
-            newSticker.style.height = '100vh';
-            newSticker.style.left = '50%';
-            newSticker.style.top = '50%';
-            newSticker.style.transform = 'translate(-50%, -50%)';
-            newSticker.setAttribute('data-angle', '0');
-            newSticker.classList.add('locked');
-            window.clearSelection();
                 colorInput.click();
             };
             
