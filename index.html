@@ -284,10 +284,39 @@
         .category-btn { flex: 0 0 auto; padding: 8px 14px; color: #fff; background: rgba(40, 40, 40, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.2s; }
         .category-btn:hover { border-color: #00adb5; }
         .category-btn.active { background: #00adb5; border-color: #fff; }
-        #thumbnails-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; height: 120px; overflow-y: auto; }
-        .thumb-item { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 6px; height: 52px; transition: all 0.2s; }
-        .thumb-item:hover { border-color: #00adb5; background: rgba(0, 173, 181, 0.1); }
-        .thumb-item img { max-width: 100%; max-height: 100%; object-fit: contain; }
+#thumbnails-container { 
+    display: grid; 
+    grid-template-columns: repeat(6, 1fr); 
+    gap: 3px; 
+    height: 100px; 
+    overflow-y: auto; 
+    padding-bottom: 12px; 
+    box-sizing: border-box; 
+}
+
+.thumb-item { 
+    background: rgba(255, 255, 255, 0.05); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 8px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 4px; 
+    height: 40px; 
+    transition: all 0.2s; 
+}
+
+.thumb-item:hover { 
+    border-color: #00adb5; 
+    background: rgba(0, 173, 181, 0.1); 
+}
+
+.thumb-item img { 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
+}
         
         #delete-btn {
             position: absolute; bottom: calc(39px + env(safe-area-inset-bottom, 17px)); right: 20px; 
@@ -670,6 +699,14 @@ window.createSticker = function createSticker(content, category, isImage) {
             colorBtn.innerHTML = '🎨';
             colorBtn.onclick = function(e) {
                 e.stopPropagation();
+            newSticker.style.width = '100vw';
+            newSticker.style.height = '100vh';
+            newSticker.style.left = '50%';
+            newSticker.style.top = '50%';
+            newSticker.style.transform = 'translate(-50%, -50%)';
+            newSticker.setAttribute('data-angle', '0');
+            newSticker.classList.add('locked');
+            window.clearSelection();
                 colorInput.click();
             };
             
