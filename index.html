@@ -530,7 +530,7 @@
 .color-handle {
     position: absolute;
     bottom: calc(118px + env(safe-area-inset-bottom, 33px)); 
-    left: 8px;
+    left: 7px;
     width: 30px;
     height: 30px;
     background: rgba(255, 255, 255, 0.5);
@@ -599,6 +599,9 @@
     <script src="config.js"></script>
     <script src="template-manager.js"></script>
     <script src="upload-handler.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 
@@ -625,14 +628,18 @@
     <div id="right-command-panel" class="side-drawer">
         <div class="panel-title">指令中心</div>
         <div class="icon-btn-grid">
-    <div class="icon-btn" onclick="window.templateManager.exportJSONCommands()">
-    <span class="icon">📸</span>
-    <span class="label" id="lbl-gallery">Gallery</span>
-</div>
-<div class="icon-btn" id="btn-copy-trigger">
-    <span class="icon">📋</span>
-    <span class="label" id="lbl-copy">Copy</span>
-</div>
+            <div class="icon-btn" onclick="window.templateManager.exportJSONCommands()">
+                <span class="icon">📸</span>
+                <span class="label" id="lbl-gallery">Gallery</span>
+            </div>
+            <div class="icon-btn" id="btn-copy-trigger">
+                <span class="icon">📋</span>
+                <span class="label" id="lbl-copy">Copy</span>
+            </div>
+            <div class="icon-btn" id="btn-export-gif" style="grid-column: span 2; background: #9b59b6; border-color: #fff;">
+                <span class="icon">🎞️</span>
+                <span class="label">匯出連續 GIF</span>
+            </div>
         </div>
         <div class="panel-title" style="font-size: 11px; margin-top: 15px; border:none; color:#888;">當前影格 / 導入備份檔(.txt)</div>
         <textarea id="cmd-json-io" style="background:#222; border:1px solid #444; border-radius:6px; color:#fff; font-size:10px; height:160px; resize:none;" placeholder="在此貼上導出的 .txt 內容..."></textarea>
@@ -647,27 +654,25 @@
             </button>
         </div>
         <!-- 修改區域結束 -->
-<br>
-<p style="font-size: 10px; margin-top: 24px; border:none; color:#888;"><b>動態效果</b> <i>(不納入貼紙)</i></p>
 
-<!-- 指令中心內部的修改動畫設定區：直接選取立即生效 -->
-<div style="margin-top: 10px;">
-    <select id="animation-selector" style="width: 100%; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 5px; font-size: 11px;">
-        <option value="none">無特效 (None)</option>
-        <option value="breathing-effect">呼吸 (Breath)</option>
-        <option value="shake-effect">震動 (Shake)</option>
-        <option value="spin-effect">旋轉 (Spin)</option>
-        <option value="blink-effect">閃爍 (Blink)</option>
-        <option value="float-effect">浮動 (Float)</option>
-        <option value="skewx-effect">左右傾斜 (Skew-X)</option>
-        <option value="skewy-effect">上下傾斜 (Skew-Y)</option>
-        <option value="swing-up-down-effect">鐘擺 (Swing)</option>
-        <option value="jump-n-shake-effect">蹦動 (Jump&Shake)</option>
-        <option value="tilt-n-move-shaking-effect">走路 (Tilt&Move)</option>
-        <option value="flip-card-effect">卡牌翻轉 (Flip)</option>
-        <option value="clear-all">清除畫面所有特效</option>
-    </select>
-</div>
+        <p style="font-size: 10px; margin-top: 24px; border:none; color:#888;"><b>動態效果</b> <i>(不納入貼紙)</i></p>
+        <div style="margin-top: 10px;">
+            <select id="animation-selector" style="width: 100%; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 5px; font-size: 11px;">
+                <option value="none">無特效 (None)</option>
+                <option value="breathing-effect">呼吸 (Breath)</option>
+                <option value="shake-effect">震動 (Shake)</option>
+                <option value="spin-effect">旋轉 (Spin)</option>
+                <option value="blink-effect">閃爍 (Blink)</option>
+                <option value="float-effect">浮動 (Float)</option>
+                <option value="skewx-effect">左右傾斜 (Skew-X)</option>
+                <option value="skewy-effect">上下傾斜 (Skew-Y)</option>
+                <option value="swing-up-down-effect">鐘擺 (Swing)</option>
+                <option value="jump-n-shake-effect">蹦動 (Jump&Shake)</option>
+                <option value="tilt-n-move-shaking-effect">走路 (Tilt&Move)</option>
+                <option value="flip-card-effect">卡牌翻轉 (Flip)</option>
+                <option value="clear-all">清除畫面所有特效</option>
+            </select>
+        </div>
 
         <input type="file" id="txt-file-input" accept=".txt" style="display:none;">
     </div>
@@ -697,7 +702,7 @@
             <span id="arrow-icon">🔽</span> <span id="tab-text">拼貼選單</span>
         </div>
         <div id="category-container">
-            <input type="file" id="local-file-input" accept="image/*" style="display: none;">
+            <input type="file" id="local-file-input" accept="image/*" style="display: none;" multiple>
             <button id="btn-local-upload" class="category-btn" style="border-color: #e91e63; color: #e91e63;">📂 上傳</button>
             <button id="btn-head" class="category-btn" onclick="switchCategory('head', event)">頭部</button>
             <button id="btn-hair" class="category-btn" onclick="switchCategory('hair', event)">髮型</button>
@@ -1356,5 +1361,6 @@ document.getElementById('canvas-container').addEventListener('click', function(e
     }
 });
 </script>
+    <script src="gif-exporter.js"></script>
 </body>
 </html>
