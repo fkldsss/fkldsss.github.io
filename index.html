@@ -467,7 +467,26 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }      
-
+/* ---- 新按鈕「全部解鎖」長按特效 ---- */
+#btn-unlock-all.charging {
+    background: #e74c3c !important;
+    border-color: #fff !important;
+    animation: unlock-pulse 0.5s ease-in-out infinite alternate;
+}
+#btn-unlock-all.charging .icon-label {
+    display: inline-block;
+    animation: unlock-shake 0.3s infinite;
+}
+@keyframes unlock-pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); background: #c0392b; }
+}
+@keyframes unlock-shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+}
         #mode-toggle-box {
             position: absolute; bottom: calc(35px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 8px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
         }
@@ -600,7 +619,6 @@
     <script src="template-manager.js"></script>
     <script src="upload-handler.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
@@ -673,7 +691,22 @@
                 <option value="clear-all">清除畫面所有特效</option>
             </select>
         </div>
-
+        <!-- 全部解鎖 / 長按清空畫布（改為圖示＋小文字） -->
+        <div style="display: flex; gap: 5px; margin-top: 8px;">
+            <button id="btn-unlock-all" class="btn-action" style="background: #f39c12; flex: 1; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <span class="icon-label" style="font-size: 18px;">🔓</span>
+                <span style="font-size: 9px; color: #fff; opacity: 0.8;">全部解鎖／長按清空</span>
+            </button>
+        </div>
+        <!-- 說明按鈕 -->
+        <div style="display: flex; gap: 5px; margin-top: 4px;">
+            <button id="btn-help" style="background: #2a2a2a; border: 1px solid #444; color: #666; border-radius: 6px; padding: 4px 8px; font-size: 14px; cursor: pointer; width: 100%; transition: all 0.2s; text-align: center;" 
+                    onmouseover="this.style.background='#3a3a3a'; this.style.borderColor='#666'; this.style.color='#aaa'"
+                    onmouseout="this.style.background='#2a2a2a'; this.style.borderColor='#444'; this.style.color='#666'">
+                <span style="font-size: 18px;">❓</span>
+                <span style="font-size: 9px; display: block; color: #555;">操作說明</span>
+            </button>
+        </div>
         <input type="file" id="txt-file-input" accept=".txt" style="display:none;">
     </div>
 </div>
@@ -793,34 +826,100 @@ function selectSticker(element) {
         selectedSticker = element;
         selectedSticker.classList.add('selected');
 
+        // ---------- 建立鎖頭按鈕 ----------
         const lockBtn = document.createElement('div');
         lockBtn.className = 'lock-handle';
 
-        lockBtn.innerHTML = element.classList.contains('locked') ? '🔒' : '🔓';
-        
-        lockBtn.onclick = function(e) {
+        // 檢查是否為「z-index 鎖定」狀態
+        const isZLocked = element.getAttribute('data-z-locked') === 'true';
+        lockBtn.innerHTML = element.classList.contains('locked') ? '🔒' : (isZLocked ? '🔓⚡' : '🔓');
+
+        // ---------- 長按置頂功能 ----------
+        let longPressTimer = null;
+        let isLongPress = false;
+
+        const onPointerDown = function(e) {
             e.stopPropagation();
-            element.classList.toggle('locked');
-            this.innerHTML = element.classList.contains('locked') ? '🔒' : '🔓';
-            if (element.classList.contains('locked')) {
-                window.clearSelection(); 
-            }
+            isLongPress = false;
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+                // 🔥 切換 z-index 鎖定狀態
+                const currentLockState = element.getAttribute('data-z-locked') === 'true';
+                const newLockState = !currentLockState;
+                element.setAttribute('data-z-locked', newLockState ? 'true' : 'false');
+
+                // 更新鎖頭圖示（保留原本鎖定圖示，加上 ⚡ 表示 z 鎖定）
+                const isLocked = element.classList.contains('locked');
+                if (newLockState) {
+                    lockBtn.innerHTML = isLocked ? '🔒⚡' : '🔓⚡';
+                    // 視覺反饋：金色光暈
+                    element.style.transition = 'box-shadow 0.15s';
+                    element.style.boxShadow = '0 0 25px #ffd700';
+                    setTimeout(() => {
+                        element.style.boxShadow = '';
+                    }, 300);
+                } else {
+                    lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
+                    // 視覺反饋：藍色光暈（解除鎖定）
+                    element.style.transition = 'box-shadow 0.15s';
+                    element.style.boxShadow = '0 0 25px #00adb5';
+                    setTimeout(() => {
+                        element.style.boxShadow = '';
+                    }, 300);
+                }
+            }, 150);
         };
+
+        const onPointerUp = function(e) {
+            e.stopPropagation();
+            clearTimeout(longPressTimer);
+            if (!isLongPress) {
+                // 短按：切換鎖定狀態
+                element.classList.toggle('locked');
+                const isZLockedNow = element.getAttribute('data-z-locked') === 'true';
+                const isLockedNow = element.classList.contains('locked');
+                if (isZLockedNow) {
+                    lockBtn.innerHTML = isLockedNow ? '🔒⚡' : '🔓⚡';
+                } else {
+                    lockBtn.innerHTML = isLockedNow ? '🔒' : '🔓';
+                }
+                if (element.classList.contains('locked')) {
+                    window.clearSelection();
+                }
+            }
+            isLongPress = false;
+        };
+
+        const onPointerLeave = function(e) {
+            clearTimeout(longPressTimer);
+            isLongPress = false;
+        };
+
+        lockBtn.addEventListener('mousedown', onPointerDown);
+        lockBtn.addEventListener('mouseup', onPointerUp);
+        lockBtn.addEventListener('mouseleave', onPointerLeave);
+        lockBtn.addEventListener('touchstart', onPointerDown, { passive: false });
+        lockBtn.addEventListener('touchend', onPointerUp, { passive: false });
+        lockBtn.addEventListener('touchcancel', onPointerLeave, { passive: false });
+
         selectedSticker.appendChild(lockBtn);
+
+        // ---------- z-index 管理（加入鎖定判斷） ----------
         const stickerType = selectedSticker.getAttribute('data-type');
-        
-        // --- 【核心修復】：精準隔離背景！只要不是 bg 且不是 solid，不論是 limbs、head 還是上傳物件，一律平視為一般貼紙 ---
         if (stickerType === 'bg' || stickerType === 'solid' || element.classList.contains('bg-sticker')) {
-            // 只有真正的背景物件強制鎖死在最底層
             element.style.zIndex = 1;
         } else {
-            // 所有一般貼紙（含上傳物件）平起平坐，點擊時立刻提至當前最高層級
-            window.currentMaxZIndex++;
-            element.style.zIndex = window.currentMaxZIndex;
+            // 🔥 如果貼紙的 z-index 被鎖定，就不自動提升
+            const isZLocked = element.getAttribute('data-z-locked') === 'true';
+            if (!isZLocked) {
+                window.currentMaxZIndex++;
+                element.style.zIndex = window.currentMaxZIndex;
+            }
+            // 如果已鎖定，保持現有 z-index 不變
         }
     }
 
-    deleteBtn.classList.add('show'); 
+    deleteBtn.classList.add('show');
     modeToggleBox.classList.add('show');
 }
 
@@ -883,7 +982,80 @@ delBtn.addEventListener('touchcancel', () => {
     if (deleteLongPressTimer) clearTimeout(deleteLongPressTimer);
 });
 // ==========================================
+// ---------- 全部解鎖 / 長按清空畫布（新按鈕） ----------
+const unlockBtn = document.getElementById('btn-unlock-all');
+if (unlockBtn) {
+    let pressTimer = null;
+    let isLongPress = false;
 
+    // 開始長按計時
+    function startUnlockLongPress(e) {
+        if (window.templateManager && window.templateManager.isPlaying) return;
+        e.preventDefault();
+        isLongPress = false;
+
+        // 添加長按特效（變紅＋微震）
+        unlockBtn.classList.add('charging');
+        unlockBtn.innerHTML = '<span class="icon-label">🗑️</span> 清空所有貼紙…';
+
+        pressTimer = setTimeout(() => {
+            isLongPress = true;
+            unlockBtn.classList.remove('charging');
+            // 彈出確認
+            if (confirm('⚠️ 確定要清空畫布上「所有」貼紙嗎？\n（鎖定的貼紙也會被刪除）')) {
+                const allStickers = canvasContainer.querySelectorAll('.sticker');
+                allStickers.forEach(sticker => {
+                    sticker.remove();
+                });
+                window.clearSelection();
+            }
+            // 恢復按鈕文字
+            unlockBtn.innerHTML = '<span class="icon-label">🔓</span> 貼紙全部解鎖 / 長按清空畫布';
+        }, 950);
+    }
+
+    function cancelUnlockLongPress(e) {
+        unlockBtn.classList.remove('charging');
+        if (pressTimer) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+        // 如果沒有觸發長按（短按），執行全部解鎖
+        if (!isLongPress && e.type !== 'mouseleave' && e.type !== 'touchcancel') {
+            const allStickers = canvasContainer.querySelectorAll('.sticker');
+            allStickers.forEach(sticker => {
+                sticker.classList.remove('locked');
+                const lockHandle = sticker.querySelector('.lock-handle');
+                if (lockHandle) {
+                    lockHandle.innerHTML = '🔓';
+                }
+            });
+            window.clearSelection();
+        }
+        // 恢復按鈕文字（若未在長按中恢復）
+        if (!isLongPress) {
+            unlockBtn.innerHTML = '<span class="icon-label">🔓</span> 貼紙全部解鎖 / 長按清空畫布';
+        }
+        isLongPress = false;
+    }
+
+    // 綁定事件（滑鼠）
+    unlockBtn.addEventListener('mousedown', startUnlockLongPress);
+    unlockBtn.addEventListener('mouseup', cancelUnlockLongPress);
+    unlockBtn.addEventListener('mouseleave', cancelUnlockLongPress);
+
+    // 綁定事件（觸控）
+    unlockBtn.addEventListener('touchstart', startUnlockLongPress, { passive: false });
+    unlockBtn.addEventListener('touchend', cancelUnlockLongPress, { passive: false });
+    unlockBtn.addEventListener('touchcancel', cancelUnlockLongPress, { passive: false });
+}
+// ---------- 說明按鈕（開啟 help.html） ----------
+const helpBtn = document.getElementById('btn-help');
+if (helpBtn) {
+    helpBtn.addEventListener('click', function() {
+        window.open('help.html', '_blank');
+    });
+}
 window.addEventListener('keydown', function(e) {            if (e.key === 'Delete' || e.key === 'Backspace') deleteSelectedSticker();        });
 function switchCategory(categoryName, e) {
             document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
@@ -1086,6 +1258,15 @@ window.createSticker = function createSticker(content, category, isImage) {
 
     canvasContainer.appendChild(newSticker);
     selectSticker(newSticker);
+    newSticker.addEventListener('dblclick', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('locked');
+        if (this.classList.contains('locked')) {
+            if (window.clearSelection) window.clearSelection();
+        } else {
+            if (window.selectSticker) window.selectSticker(this);
+        }
+    });
 };
 
 

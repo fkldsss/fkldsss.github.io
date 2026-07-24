@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Free Kaleidosss 操作說明</title>
+    <style>
+        body { background: #1a1a1a; color: #ccc; font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        h1 { color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        h2 { color: #f39c12; margin-top: 24px; }
+        kbd { background: #333; padding: 2px 8px; border-radius: 4px; border: 1px solid #555; font-size: 13px; color: #fff; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+        th { text-align: left; background: #2a2a2a; padding: 8px; border-bottom: 2px solid #444; }
+        td { padding: 8px; border-bottom: 1px solid #333; vertical-align: top; }
+        td:first-child { width: 140px; }
+        td:last-child { color: #aaa; }
+        hr { border: none; border-top: 1px solid #333; margin: 20px 0; }
+        .note { background: #252525; padding: 12px; border-radius: 6px; border-left: 3px solid #00adb5; margin: 12px 0; }
+    </style>
+</head>
+<body>
+<h1>🎨 Free Kaleidosss 操作說明</h1>
+<p style="color: #888;">此文件說明所有按鍵、手勢與功能用途，方便您快速上手。</p>
+
+<h2>📌 滑鼠／觸控操作</h2>
+<table>
+    <tr><th>操作</th><th>功能</th></tr>
+    <tr><td>點擊貼紙</td><td>選取貼紙（顯示虛線框），並將其提升至最上層</td></tr>
+    <tr><td>拖曳貼紙</td><td>移動貼紙位置</td></tr>
+    <tr><td>拖曳右下角 <kbd>◢</kbd></td><td>縮放貼紙（按住 <kbd>自由變形</kbd> 可等比例縮放）</td></tr>
+    <tr><td>拖曳頂部 <kbd>●</kbd></td><td>旋轉貼紙</td></tr>
+    <tr><td>雙擊貼紙</td><td>切換鎖定／解鎖（鎖定後不可移動／縮放／旋轉）</td></tr>
+    <tr><td>長按鎖頭 <kbd>🔓</kbd>／<kbd>🔒</kbd></td><td>切換圖層（⚡ 圖示出現，貼紙轉為底層）</td></tr>
+</table>
+
+<h2>🔘 右側「指令中心」按鈕</h2>
+<table>
+    <tr><th>按鈕</th><th>功能</th></tr>
+    <tr><td><kbd>📸 Gallery</kbd></td><td>將目前畫布內容儲存為一個「影格」（顯示於左側時間軸）</td></tr>
+    <tr><td><kbd>📋 Copy</kbd></td><td>匯出所有影格為 JSON 文字（備份用）</td></tr>
+    <tr><td><kbd>🎞️ 匯出連續 PNG</kbd></td><td>將所有影格匯出為 ZIP 壓縮包（內含 PNG 圖片序列）</td></tr>
+    <tr><td><kbd>🔓 全部解鎖／長按清空</kbd></td><td>短按：全部貼紙解鎖<br>長按（0.95 秒）：清空畫布上「所有」貼紙（含鎖定）</td></tr>
+    <tr><td><kbd>⬆ 雙擊匯入指令庫</kbd></td><td>從右側文字框匯入先前備份的 JSON 影格數據</td></tr>
+    <tr><td><kbd>📁</kbd></td><td>載入 .txt 備份檔（自動填入文字框）</td></tr>
+</table>
+
+<h2>🎬 左側「範本播放器」</h2>
+<table>
+    <tr><th>項目</th><th>功能</th></tr>
+    <tr><td><kbd>⏰ 播放速度</kbd></td><td>調整播放時每幀停留時間（0.4～10 秒）</td></tr>
+    <tr><td><kbd>▶ Play</kbd></td><td>播放時間軸上的所有影格（循環播放）</td></tr>
+    <tr><td><kbd>■ Stop</kbd></td><td>停止播放，回到目前影格</td></tr>
+    <tr><td>點擊影格卡片</td><td>預覽該影格內容</td></tr>
+    <tr><td>雙擊影格名稱</td><td>重新命名影格（最多 8 字）</td></tr>
+    <tr><td>右鍵點擊影格卡片</td><td>複製該影格（插入在原影格下方）</td></tr>
+    <tr><td>拖曳影格卡片</td><td>調整影格播放順序（拖曳後需點 <kbd>📋 Copy</kbd> 確認）</td></tr>
+</table>
+
+<h2>🗑️ 垃圾桶按鈕</h2>
+<table>
+    <tr><th>操作</th><th>功能</th></tr>
+    <tr><td>點擊 <kbd>🗑️</kbd></td><td>刪除目前選取的貼紙（若已選取）</td></tr>
+    <tr><td>長按 <kbd>🗑️</kbd>（0.95 秒）</td><td>清除畫布上所有「未鎖定」的貼紙</td></tr>
+</table>
+
+<h2>⌨️ 鍵盤快捷鍵</h2>
+<table>
+    <tr><th>按鍵</th><th>功能</th></tr>
+    <tr><td><kbd>Delete</kbd> 或 <kbd>Backspace</kbd></td><td>刪除目前選取的貼紙</td></tr>
+</table>
+
+<h2>📂 貼紙來源（下方選單）</h2>
+<table>
+    <tr><th>分類</th><th>內容</th></tr>
+    <tr><td><kbd>📂 上傳</kbd></td><td>上傳自己的圖片（可複選，支援 Base64 儲存）</td></tr>
+    <tr><td><kbd>頭部／髮型／樣貌</kbd></td><td>內建範例圖片</td></tr>
+    <tr><td><kbd>文字／繪製</kbd></td><td>表情符號與繪圖字元</td></tr>
+</table>
+
+<h2>🎨 貼紙特效（動態效果下拉選單）</h2>
+<table>
+    <tr><th>選項</th><th>效果</th></tr>
+    <tr><td>呼吸／震動／旋轉／閃爍／浮動⋯</td><td>為「目前選取的貼紙」套用動畫特效</td></tr>
+    <tr><td><kbd>清除畫面所有特效</kbd></td><td>移除所有貼紙的動畫特效</td></tr>
+</table>
+
+<h2>🧩 其他重要功能</h2>
+<table>
+    <tr><th>功能</th><th>說明</th></tr>
+    <tr><td>鎖定貼紙</td><td>點擊鎖頭 <kbd>🔓</kbd> 可鎖定貼紙（鎖定後不可編輯，且無法被長按垃圾桶刪除）</td></tr>
+    <tr><td>z-index 鎖定（⚡）</td><td>長按鎖頭可切換，鎖定後點擊貼紙不會浮到最上層</td></tr>
+    <tr><td>自由變形模式</td><td>勾選後，縮放貼紙時可任意拉伸（不保持比例）</td></tr>
+    <tr><td>瀏覽器記憶體</td><td>上傳的圖片會自動儲存在 localStorage，重新整理網頁不會消失</td></tr>
+</table>
+
+<hr>
+<p style="color: #666; font-size: 12px;">📌 提示：長按時間皆為 0.15 秒（鎖頭）或 0.95 秒（清空按鈕）</p>
+</body>
+</html>
