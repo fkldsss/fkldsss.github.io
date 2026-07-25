@@ -691,18 +691,37 @@
                 <option value="clear-all">清除畫面所有特效</option>
             </select>
         </div>
+        <!-- ===== 透明度控制 ===== -->
+        <div style="margin-top: 9px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.15);">
+            <!-- 標題列（點擊展開/收合） -->
+            <div id="opacity-toggle-header" style="display: flex; justify-content: space-between; align-items: center; padding: 5px 12px; cursor: pointer; user-select: none; transition: background 0.15s;">
+                <span style="font-size: 12px; color: #aaa;">🎭 透明度變更</span>
+                <span id="opacity-toggle-icon" style="font-size: 12px; color: #666; transition: transform 0.3s;">▶</span>
+            </div>
+            <!-- 內容區（預設收合） -->
+            <div id="opacity-content" style="display: none; padding: 0 12px 24px 12px; transition: all 0.3s ease;">
+                <input type="range" id="opacity-slider" min="0" max="100" value="100" 
+                       style="width: 100%; accent-color: #00adb5; background: #333; border-radius: 4px; height: 4px; cursor: pointer; padding: 0;">
+                <div style="display: flex; justify-content: space-between; margin-top: 2px;">
+                    <span style="font-size: 9px; color: #555;">0%</span>
+                    <button id="opacity-reset-btn" style="background: none; border: 1px solid #444; color: #888; font-size: 9px; padding: 0 10px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">↺ 重置</button>
+                    <span style="font-size: 9px; color: #555;">100%</span>
+                </div>
+            </div>
+        </div>
+        <!-- ===== 透明度控制結束 ===== -->
         <!-- 全部解鎖 + 說明 -->
         <div style="display: flex; gap: 12px; margin-top: 8px; justify-content: center; align-items: center; min-height: 60px; padding: 4px 0 0 0;">
             <!-- 全部解鎖按鈕 -->
             <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                <button id="btn-unlock-all" class="btn-action" style="background: #f39c12; width: 48px; height: 32px; border-radius: 16px; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; cursor: pointer; transition: background 0.2s;">
+                <button id="btn-unlock-all" class="btn-action" style="background: #4a2e03; width: 42px; height: 26px; border-radius: 16px; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; cursor: pointer; transition: background 0.2s;">
                     <span class="icon-label" style="font-size: 14px;">🔓</span>
                 </button>
-                <span style="font-size: 10px; color: #888; margin-top: 2px; text-align: center; line-height: 1.3; pointer-events: none;">全部解鎖<br>長按清空畫布</span>
+                <span style="font-size: 10px; color: #888; margin-top: 2px; text-align: center; line-height: 1.3; pointer-events: none;">全部解鎖 / 長按清空畫布</span>
             </div>
             <!-- 說明按鈕 -->
             <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 auto;">
-                <button id="btn-help" style="background: #2a2a2a; border: 1px solid #444; color: #666; border-radius: 50%; width: 26px; height: 26px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s;" 
+                <button id="btn-help" style="background: #2a2a2a; border: 1px solid #444; color: #666; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s;" 
                         title="操作說明"
                         onmouseover="this.style.background='#3a3a3a'; this.style.borderColor='#666'; this.style.color='#aaa'"
                         onmouseout="this.style.background='#2a2a2a'; this.style.borderColor='#444'; this.style.color='#666'">
@@ -713,7 +732,6 @@
         <input type="file" id="txt-file-input" accept=".txt" style="display:none;">
     </div>
 </div>
-
     <div id="txt-export-overlay">
         <div style="font-size: 12px; font-weight: bold; color: #00adb5; display: flex; justify-content: space-between; align-items: center;">
             <span>📋 已彙總的 Save 座標指令庫</span>
@@ -1147,67 +1165,33 @@ window.createSticker = function createSticker(content, category, isImage) {
     const randomOffset = Math.random() * 20;
 
 // 定位邏輯
-    if (category === 'bg') {
+if (category === 'bg') {
         newSticker.classList.add('bg-sticker');
         newSticker.style.position = 'absolute';
+        newSticker.style.zIndex = '1';
+        newSticker.style.cursor = 'default';
 
-        let initialW = 120; // 預設一般貼紙寬高
-        let initialH = 120;
+        // 移除可能殘留的文字
+        const textSpan = newSticker.querySelector('span');
+        if (textSpan) textSpan.remove();
 
+        // ----- 處理「純色背景」(solid) -----
         if (content === 'solid') {
-            initialW = window.innerWidth;
-            initialH = window.innerHeight;
+            // 直接鋪滿全螢幕
             newSticker.style.width = '100vw';
             newSticker.style.height = '100vh';
+            newSticker.style.left = '0px';
+            newSticker.style.top = '0px';
             newSticker.style.backgroundColor = '#ffffff';
             newSticker.classList.add('locked');
             window.clearSelection();
-        } else {
-            newSticker.style.width = initialW + 'px';
-            newSticker.style.height = initialH + 'px';
-            newSticker.style.backgroundSize = '100% 100%';
-        }
 
-        // --- 核心邏輯點：直接用 JS 算出絕對坐標像素，拒絕 transform 偽置中 ---
-        const pixelLeft = (window.innerWidth - initialW) / 2;
-        const pixelTop = (window.innerHeight - initialH) / 2;
-        
-        newSticker.style.left = pixelLeft + 'px';
-        newSticker.style.top = pixelTop + 'px';
-        newSticker.style.transform = 'rotate(0deg)'; // 初始旋轉度為 0
-
-        newSticker.style.zIndex = '1';
-        newSticker.style.cursor = 'default';
-        
-        const textSpan = newSticker.querySelector('span');
-        if (textSpan) { textSpan.remove(); }
-        
-        const handle = document.createElement('div');
-        handle.className = 'resize-handle';
-        newSticker.appendChild(handle);
-  
-        const expandBtn = document.createElement('div');
-        expandBtn.className = 'expand-handle';
-        expandBtn.innerHTML = '⤢'; // 鋪滿圖示
-        expandBtn.onclick = function(e) {
-            e.stopPropagation();
-            newSticker.style.width = '100vw';
-            newSticker.style.height = '100vh';
-            // 鋪滿時同樣寫死成 0, 0 絕對像素，不再使用百分比與 translate
-            newSticker.style.left = '0px';
-            newSticker.style.top = '0px';
-            newSticker.style.transform = 'rotate(0deg)';
-            newSticker.setAttribute('data-angle', '0');
-        };
-        newSticker.appendChild(expandBtn);
-
-        if (content === 'solid') {
+            // 調色盤功能
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
             colorInput.className = 'hidden-color-picker';
-            colorInput.style.display = 'none'; 
+            colorInput.style.display = 'none';
             colorInput.value = '#ffffff';
-
             const colorBtn = document.createElement('div');
             colorBtn.className = 'color-handle';
             colorBtn.innerHTML = '🎨';
@@ -1215,15 +1199,137 @@ window.createSticker = function createSticker(content, category, isImage) {
                 e.stopPropagation();
                 colorInput.click();
             };
-            
-            colorInput.addEventListener('input', (e) => { 
-                newSticker.style.backgroundColor = e.target.value; 
+            colorInput.addEventListener('input', (e) => {
+                newSticker.style.backgroundColor = e.target.value;
             });
-            
             newSticker.appendChild(colorBtn);
             newSticker.appendChild(colorInput);
+            
+            // 把純色背景加到畫布
+            canvasContainer.appendChild(newSticker);
+            selectSticker(newSticker);
+            return; // solid 處理完畢
         }
-    } else {
+
+        // ----- 處理「圖片背景」 (保持原始比例) -----
+        newSticker.style.backgroundImage = `url('${content}')`;
+        newSticker.style.backgroundSize = 'contain';
+        newSticker.style.backgroundRepeat = 'no-repeat';
+        newSticker.style.backgroundPosition = 'center';
+        newSticker.style.backgroundColor = 'rgba(0,0,0,0.05)';
+        
+        // 先給一個臨時尺寸，讓貼紙能立即顯示（等會圖片載入後會重新調整）
+        newSticker.style.width = '100px';
+        newSticker.style.height = '100px';
+        newSticker.style.left = (window.innerWidth - 100) / 2 + 'px';
+        newSticker.style.top = (window.innerHeight - 100) / 2 + 'px';
+
+        // 先把貼紙加到畫布，這樣點擊縮圖就能馬上看到
+        canvasContainer.appendChild(newSticker);
+        selectSticker(newSticker);
+
+        // 讀取圖片原始尺寸，並計算適當的初始大小 (盡量放大但完整顯示)
+        let img = new Image();
+        img.onload = function() {
+            const aspect = img.width / img.height;
+            const winW = window.innerWidth;
+            const winH = window.innerHeight;
+            let w, h;
+            // 先以寬度為基準
+            w = winW * 0.9; // 留一點邊距，不貼邊
+            h = w / aspect;
+            if (h > winH * 0.9) {
+                h = winH * 0.9;
+                w = h * aspect;
+            }
+            newSticker.style.width = w + 'px';
+            newSticker.style.height = h + 'px';
+            newSticker.style.left = (winW - w) / 2 + 'px';
+            newSticker.style.top = (winH - h) / 2 + 'px';
+        };
+        img.src = content;
+
+        // ----- 建立「縮放手柄」(resize) -----
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        newSticker.appendChild(resizeHandle);
+
+        // ----- 建立「旋轉手柄」(rotate) -----
+        const rotateHandle = document.createElement('div');
+        rotateHandle.className = 'rotate-handle';
+        newSticker.appendChild(rotateHandle);
+
+        // ----- 建立「鋪滿按鈕」 (短按: 拉伸；長按: 等比完整顯示) -----
+        const expandBtn = document.createElement('div');
+        expandBtn.className = 'expand-handle';
+        expandBtn.innerHTML = '⤢';
+        newSticker.appendChild(expandBtn);
+
+        let expandPressTimer = null;
+        let isExpandLongPress = false;
+
+        const onExpandPointerDown = function(e) {
+            e.stopPropagation();
+            isExpandLongPress = false;
+            expandPressTimer = setTimeout(() => {
+                isExpandLongPress = true;
+                // 長按：等比完整顯示 (contain)
+                const src = newSticker.getAttribute('data-src');
+                if (src) {
+                    let tmpImg = new Image();
+                    tmpImg.onload = function() {
+                        const aspect = tmpImg.width / tmpImg.height;
+                        const winW = window.innerWidth;
+                        const winH = window.innerHeight;
+                        let w, h;
+                        // 計算 contain 尺寸：先以寬度填滿，若高度超出則改以高度填滿
+                        w = winW;
+                        h = w / aspect;
+                        if (h > winH) {
+                            h = winH;
+                            w = h * aspect;
+                        }
+                        newSticker.style.backgroundSize = 'contain';
+                        newSticker.style.width = w + 'px';
+                        newSticker.style.height = h + 'px';
+                        newSticker.style.left = (winW - w) / 2 + 'px';
+                        newSticker.style.top = (winH - h) / 2 + 'px';
+                        newSticker.style.transform = 'rotate(0deg)';
+                        newSticker.setAttribute('data-angle', '0');
+                    };
+                    tmpImg.src = src;
+                }
+            }, 150);
+        };
+
+        const onExpandPointerUp = function(e) {
+            e.stopPropagation();
+            clearTimeout(expandPressTimer);
+            if (!isExpandLongPress) {
+                // 短按：拉伸鋪滿 (變形)
+                newSticker.style.backgroundSize = '100% 100%';
+                newSticker.style.width = '100vw';
+                newSticker.style.height = '100vh';
+                newSticker.style.left = '0px';
+                newSticker.style.top = '0px';
+                newSticker.style.transform = 'rotate(0deg)';
+                newSticker.setAttribute('data-angle', '0');
+            }
+        };
+
+        expandBtn.addEventListener('mousedown', onExpandPointerDown);
+        expandBtn.addEventListener('mouseup', onExpandPointerUp);
+        expandBtn.addEventListener('mouseleave', function() {
+            clearTimeout(expandPressTimer);
+        });
+        expandBtn.addEventListener('touchstart', onExpandPointerDown, { passive: false });
+        expandBtn.addEventListener('touchend', onExpandPointerUp, { passive: false });
+        expandBtn.addEventListener('touchcancel', function() {
+            clearTimeout(expandPressTimer);
+        });
+
+        return; // 結束背景分支
+} else {
         if (category === 'text') {
             newSticker.style.left = (screenWidth / 2 - 100 + randomOffset) + 'px';
             newSticker.style.top = (screenHeight / 2 - 30 + randomOffset) + 'px';
@@ -1548,6 +1654,99 @@ document.getElementById('canvas-container').addEventListener('click', function(e
         window.hideMenuBox()
     }
 });
+// ============================================================
+//  🎭 透明度控制功能
+// ============================================================
+(function() {
+    const header = document.getElementById('opacity-toggle-header');
+    const content = document.getElementById('opacity-content');
+    const icon = document.getElementById('opacity-toggle-icon');
+    const slider = document.getElementById('opacity-slider');
+    const valueDisplay = document.getElementById('opacity-value');
+    const resetBtn = document.getElementById('opacity-reset-btn');
+
+    // ---------- 折疊開關 ----------
+    let isOpen = false;
+
+    header.addEventListener('click', function(e) {
+        e.stopPropagation();
+        isOpen = !isOpen;
+        if (isOpen) {
+            content.style.display = 'block';
+            icon.textContent = '▼';
+            // 如果有選中貼紙，更新數值
+            if (selectedSticker) {
+                updateOpacityUI(selectedSticker);
+            }
+        } else {
+            content.style.display = 'none';
+            icon.textContent = '▶';
+        }
+    });
+
+    // ---------- 更新滑桿與數值顯示 ----------
+    function updateOpacityUI(sticker) {
+        if (!sticker) {
+            slider.disabled = true;
+            valueDisplay.textContent = '--';
+            return;
+        }
+
+        // 檢查是否為 solid 背景
+        const isSolid = sticker.getAttribute('data-text-content') === 'solid';
+        if (isSolid) {
+            slider.disabled = true;
+            valueDisplay.textContent = '--';
+            return;
+        }
+
+        const currentOpacity = parseFloat(sticker.style.opacity);
+        const percent = isNaN(currentOpacity) ? 100 : Math.round(currentOpacity * 100);
+        slider.value = percent;
+        valueDisplay.textContent = percent + '%';
+        slider.disabled = false;
+    }
+
+    // ---------- 滑桿事件 ----------
+    slider.addEventListener('input', function() {
+        if (!selectedSticker) return;
+        const percent = parseInt(this.value);
+        const opacity = percent / 100;
+        selectedSticker.style.opacity = opacity;
+        valueDisplay.textContent = percent + '%';
+    });
+
+    // ---------- 重置按鈕 ----------
+    resetBtn.addEventListener('click', function() {
+        if (!selectedSticker) return;
+        selectedSticker.style.opacity = 1;
+        slider.value = 100;
+        valueDisplay.textContent = '100%';
+    });
+
+    // ---------- 擴充 selectSticker / clearSelection ----------
+    const originalSelectSticker = window.selectSticker;
+    const originalClearSelection = window.clearSelection;
+
+    window.selectSticker = function(element) {
+        originalSelectSticker.call(this, element);
+        if (isOpen) {
+            updateOpacityUI(selectedSticker);
+        }
+    };
+
+    window.clearSelection = function() {
+        originalClearSelection.call(this);
+        if (isOpen) {
+            updateOpacityUI(null);
+        }
+    };
+
+    // ---------- 初始化 ----------
+    updateOpacityUI(null);
+
+    console.log('🎭 透明度控制（可折疊）已啟用');
+})();
 </script>
     <script src="gif-exporter.js"></script>
 </body>
