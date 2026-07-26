@@ -73,8 +73,10 @@
         .resize-handle {
             display: none; 
             position: absolute;
-            width: 22px;   
-            height: 22px;
+            width: 24px;   
+            height: 24px;
+            line-height: 20px;
+            text-align: center;
             background-color: #00adb5;
             border: 2px solid #fff;
             border-radius: 50%;
@@ -89,8 +91,10 @@
         .rotate-handle {
             display: none;
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
+            line-height: 20px;
+            text-align: center;
             background-color: #007cb6; 
             border: 2px solid #fff;
             border-radius: 50%;
@@ -110,8 +114,8 @@
             position: absolute;
             top: 6px;
             right: 6px;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             background-color: #ff5252;
             border: 2px solid #fff;
             border-radius: 50%;
@@ -178,7 +182,7 @@
             cursor: pointer;
             z-index: 10;
             text-align: center;
-            line-height: 20px;
+            line-height: 22px;
             font-size: 12px;
             color: white;
             user-select: none;
@@ -200,7 +204,7 @@
             cursor: pointer;
             z-index: 10;
             text-align: center;
-            line-height: 20px;
+            line-height: 22px;
             font-size: 12px;
             color: white;
             user-select: none;
@@ -348,7 +352,7 @@
             position: fixed; 
             bottom: 25px; 
             left: 50%; 
-            transform: translateX(-50%) translateY(calc(100% - 7px)); 
+            transform: translateX(-50%) translateY(calc(100% - 3px)); 
             background: rgba(20, 20, 20, 0.9); 
             backdrop-filter: blur(5px); 
             padding: 13px 13px calc(9px + env(safe-area-inset-bottom)); 
@@ -662,7 +666,7 @@
                 <span class="icon">📋</span>
                 <span class="label" id="lbl-copy">Copy</span>
             </div>
-            <div class="icon-btn" id="btn-export-gif" style="grid-column: span 2; background: #342f36; border-color: #fff;">
+            <div class="icon-btn" id="btn-export-gif" style="grid-column: span 2; background: ##342f36; border-color: #fff;">
                 <span class="icon">🎞️</span>
                 <span class="label">匯出連續 PNG</span>
             </div>
@@ -719,7 +723,7 @@
         </div>
         <!-- ===== 透明度控制結束 ===== -->
         <!-- 全部解鎖 + 說明 -->
-        <div style="display: flex; gap: 12px; margin-top: 8px; justify-content: center; align-items: center; min-height: 60px; padding: 4px 0 0 0;">
+        <div style="display: flex; gap: 22px; margin-top: 8px; justify-content: center; align-items: center; min-height: 60px; padding: 4px 0 0 0;">
             <!-- 全部解鎖按鈕 -->
             <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
                 <button id="btn-unlock-all" class="btn-action" style="background: #4a3f2d; width: 42px; height: 26px; border-radius: 16px; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; cursor: pointer; transition: background 0.2s;">
@@ -858,81 +862,76 @@ function selectSticker(element) {
         window.selectedSticker = element;
         selectedSticker.classList.add('selected');
 
-        // ---------- 建立鎖頭按鈕 ----------
+        // ---------- 建立鎖頭按鈕 (保留長按 z-index 鎖定) ----------
         const lockBtn = document.createElement('div');
         lockBtn.className = 'lock-handle';
+        lockBtn.innerHTML = element.classList.contains('locked') ? '🔒' : '🔓';
+        lockBtn.style.display = 'flex';
+        lockBtn.style.alignItems = 'center';
+        lockBtn.style.justifyContent = 'center';
+        lockBtn.style.userSelect = 'none';
+        lockBtn.style.touchAction = 'none'; // 避免觸控時干擾
 
-        // 檢查是否為「z-index 鎖定」狀態
-        const isZLocked = element.getAttribute('data-z-locked') === 'true';
-        lockBtn.innerHTML = element.classList.contains('locked') ? '🔒' : (isZLocked ? '🔓⚡' : '🔓');
-
-        // ---------- 長按置頂功能 ----------
         let longPressTimer = null;
-        let isLongPress = false;
+        let isLongPressTriggered = false;
 
+        // 長按處理 (pointerdown + pointerup)
         const onPointerDown = function(e) {
             e.stopPropagation();
-            isLongPress = false;
+            isLongPressTriggered = false;
             longPressTimer = setTimeout(() => {
-                isLongPress = true;
-                // 🔥 切換 z-index 鎖定狀態
-                const currentLockState = element.getAttribute('data-z-locked') === 'true';
-                const newLockState = !currentLockState;
-                element.setAttribute('data-z-locked', newLockState ? 'true' : 'false');
-
-                // 更新鎖頭圖示（保留原本鎖定圖示，加上 ⚡ 表示 z 鎖定）
+                isLongPressTriggered = true;
+                // 長按：切換 z-index 鎖定
+                const currentZLock = element.getAttribute('data-z-locked') === 'true';
+                const newZLock = !currentZLock;
+                element.setAttribute('data-z-locked', newZLock ? 'true' : 'false');
+                // 更新鎖頭圖示（保留原有鎖定圖示，加上 ⚡ 表示 z 鎖定）
                 const isLocked = element.classList.contains('locked');
-                if (newLockState) {
-                    lockBtn.innerHTML = isLocked ? '🔒⚡' : '🔓⚡';
-                    // 視覺反饋：金色光暈
-                    element.style.transition = 'box-shadow 0.15s';
-                    element.style.boxShadow = '0 0 25px #ffd700';
-                    setTimeout(() => {
-                        element.style.boxShadow = '';
-                    }, 300);
-                } else {
-                    lockBtn.innerHTML = isLocked ? '🔒' : '🔓';
-                    // 視覺反饋：藍色光暈（解除鎖定）
-                    element.style.transition = 'box-shadow 0.15s';
-                    element.style.boxShadow = '0 0 25px #00adb5';
-                    setTimeout(() => {
-                        element.style.boxShadow = '';
-                    }, 300);
-                }
-            }, 150);
+                lockBtn.innerHTML = isLocked ? (newZLock ? '🔒⚡' : '🔒') : (newZLock ? '🔓⚡' : '🔓');
+                // 視覺回饋
+                element.style.transition = 'box-shadow 0.15s';
+                element.style.boxShadow = newZLock ? '0 0 25px #ffd700' : '0 0 25px #00adb5';
+                setTimeout(() => { element.style.boxShadow = ''; }, 300);
+            }, 250); // 長按時間 250ms
         };
 
         const onPointerUp = function(e) {
             e.stopPropagation();
             clearTimeout(longPressTimer);
-            if (!isLongPress) {
-                // 短按：切換鎖定狀態
-                element.classList.toggle('locked');
-                const isZLockedNow = element.getAttribute('data-z-locked') === 'true';
-                const isLockedNow = element.classList.contains('locked');
-                if (isZLockedNow) {
-                    lockBtn.innerHTML = isLockedNow ? '🔒⚡' : '🔓⚡';
-                } else {
-                    lockBtn.innerHTML = isLockedNow ? '🔒' : '🔓';
-                }
-                if (element.classList.contains('locked')) {
-                    window.clearSelection();
-                }
-            }
-            isLongPress = false;
+            // 短按由 click 事件處理，這裡不做任何事
         };
 
         const onPointerLeave = function(e) {
             clearTimeout(longPressTimer);
-            isLongPress = false;
         };
 
-        lockBtn.addEventListener('mousedown', onPointerDown);
-        lockBtn.addEventListener('mouseup', onPointerUp);
-        lockBtn.addEventListener('mouseleave', onPointerLeave);
+        // 綁定長按事件 (pointer)
+        lockBtn.addEventListener('pointerdown', onPointerDown);
+        lockBtn.addEventListener('pointerup', onPointerUp);
+        lockBtn.addEventListener('pointerleave', onPointerLeave);
+        // 觸控支援
         lockBtn.addEventListener('touchstart', onPointerDown, { passive: false });
         lockBtn.addEventListener('touchend', onPointerUp, { passive: false });
         lockBtn.addEventListener('touchcancel', onPointerLeave, { passive: false });
+
+        // 短按：點擊切換鎖定狀態 (click 事件)
+        lockBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // 如果剛剛觸發了長按，則忽略這次點擊
+            if (isLongPressTriggered) {
+                isLongPressTriggered = false; // 重置標誌
+                return;
+            }
+            // 切換 locked 類別
+            element.classList.toggle('locked');
+            const isLocked = element.classList.contains('locked');
+            const isZLocked = element.getAttribute('data-z-locked') === 'true';
+            // 更新圖示
+            this.innerHTML = isLocked ? (isZLocked ? '🔒⚡' : '🔒') : (isZLocked ? '🔓⚡' : '🔓');
+            if (isLocked) {
+                window.clearSelection();
+            }
+        });
 
         selectedSticker.appendChild(lockBtn);
 
@@ -941,13 +940,11 @@ function selectSticker(element) {
         if (stickerType === 'bg' || stickerType === 'solid' || element.classList.contains('bg-sticker')) {
             element.style.zIndex = 1;
         } else {
-            // 🔥 如果貼紙的 z-index 被鎖定，就不自動提升
             const isZLocked = element.getAttribute('data-z-locked') === 'true';
             if (!isZLocked) {
                 window.currentMaxZIndex++;
                 element.style.zIndex = window.currentMaxZIndex;
             }
-            // 如果已鎖定，保持現有 z-index 不變
         }
     }
 
@@ -1264,10 +1261,9 @@ if (category === 'bg') {
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'resize-handle';
         resizeHandle.textContent = '⤡'; 
-        resizeHandle.style.display = 'flex';
         resizeHandle.style.alignItems = 'center';
         resizeHandle.style.justifyContent = 'center';
-        resizeHandle.style.fontSize = '10px';
+        resizeHandle.style.fontSize = '12px';
         resizeHandle.style.color = '#fff';
         newSticker.appendChild(resizeHandle);
 
@@ -1275,10 +1271,9 @@ if (category === 'bg') {
         const rotateHandle = document.createElement('div');
         rotateHandle.className = 'rotate-handle';
         rotateHandle.textContent = '↻'; 
-        rotateHandle.style.display = 'flex';
         rotateHandle.style.alignItems = 'center';
         rotateHandle.style.justifyContent = 'center';
-        rotateHandle.style.fontSize = '10px';
+        rotateHandle.style.fontSize = '12px';
         rotateHandle.style.color = '#fff';
         newSticker.appendChild(rotateHandle);
 
@@ -1369,20 +1364,18 @@ if (category === 'bg') {
         const handle = document.createElement('div');
         handle.className = 'resize-handle';
         handle.textContent = '⤡';
-        handle.style.display = 'flex';
         handle.style.alignItems = 'center';
         handle.style.justifyContent = 'center';
-        handle.style.fontSize = '10px';
+        handle.style.fontSize = '12px';
         handle.style.color = '#fff';
         newSticker.appendChild(handle);
         
         const rotateHandle = document.createElement('div');
         rotateHandle.className = 'rotate-handle';
         rotateHandle.textContent = '↻';
-        rotateHandle.style.display = 'flex';
         rotateHandle.style.alignItems = 'center';
         rotateHandle.style.justifyContent = 'center';
-        rotateHandle.style.fontSize = '10px';
+        rotateHandle.style.fontSize = '12px';
         rotateHandle.style.color = '#fff';
         newSticker.appendChild(rotateHandle);
     }
@@ -1453,7 +1446,12 @@ function handleStart(e) {
     const isRotate = target.classList.contains('rotate-handle');
     const isExpand = target.classList.contains('expand-handle');
 
-    if (!isSticker && !isHandle && !isRotate && !isExpand) return;
+    // 🔥 點擊空白處 → 取消選取（修復手柄殘留 bug）
+    if (!isSticker && !isHandle && !isRotate && !isExpand) {
+        window.clearSelection();
+        return;
+    }
+
     if (isExpand) return; // Expand 功能由獨立 click 事件處理
 
     const element = target.closest('.sticker');
@@ -1590,27 +1588,69 @@ function handleMove(e) {
         window.addEventListener('touchcancel', handleEnd);
 
         function handleEnd() {
-            if (targetElement) {
-                targetElement.style.willChange = 'auto';
-                targetElement.classList.remove('is-dragging');
-            }
-            currentAction = null;
-            targetElement = null;
+    if (targetElement) {
+        const parent = targetElement.parentElement || canvasContainer;
+        const parentWidth = parent.clientWidth;
+        const parentHeight = parent.clientHeight;
+        
+        let currentLeft = parseFloat(targetElement.style.left) || 0;
+        let currentTop = parseFloat(targetElement.style.top) || 0;
+        
+        const rect = targetElement.getBoundingClientRect();
+        const elWidth = targetElement.offsetWidth;
+        const elHeight = targetElement.offsetHeight;
+        
+        const maxOverflow = 20;
+        
+        if (currentLeft < -maxOverflow) {
+            targetElement.style.left = -maxOverflow + 'px';
+        } else if (currentLeft + elWidth > parentWidth + maxOverflow) {
+            targetElement.style.left = (parentWidth - elWidth + maxOverflow) + 'px';
         }
+        
+        if (currentTop < -maxOverflow) {
+            targetElement.style.top = -maxOverflow + 'px';
+        } else if (currentTop + elHeight > parentHeight + maxOverflow) {
+            targetElement.style.top = (parentHeight - elHeight + maxOverflow) + 'px';
+        }
+        
+        targetElement.style.willChange = 'auto';
+        targetElement.classList.remove('is-dragging');
+    }
+    currentAction = null;
+    targetElement = null;
+}
 
         window.addEventListener('resize', function() {
-            if (resizeTimeout) clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                document.querySelectorAll('.sticker').forEach(sticker => {
-                    let currentLeft = sticker.offsetLeft;
-                    let currentTop = sticker.offsetTop;
-                    const maxLeft = window.innerWidth - sticker.offsetWidth;
-                    const maxTop = window.innerHeight - sticker.offsetHeight;
-                    if (currentLeft > maxLeft) sticker.style.left = Math.max(0, maxLeft) + 'px';
-                    if (currentTop > maxTop) sticker.style.top = Math.max(0, maxTop) + 'px';
-                });
-            }, 100);
+    if (resizeTimeout) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        document.querySelectorAll('.sticker').forEach(sticker => {
+            let currentLeft = sticker.offsetLeft;
+            let currentTop = sticker.offsetTop;
+            const maxLeft = window.innerWidth - sticker.offsetWidth;
+            const maxTop = window.innerHeight - sticker.offsetHeight;
+            if (currentLeft > maxLeft) sticker.style.left = Math.max(0, maxLeft) + 'px';
+            if (currentTop > maxTop) sticker.style.top = Math.max(0, maxTop) + 'px';
         });
+        
+        // 手機轉向時，背景貼紙自動重新鋪滿
+        const bgSticker = document.querySelector('.bg-sticker');
+        if (bgSticker) {
+            const isFullscreen = bgSticker.offsetWidth >= window.innerWidth - 10 || 
+                                 bgSticker.offsetHeight >= window.innerHeight - 10;
+            if (isFullscreen) {
+                // 短按 Expand 的效果：重新鋪滿
+                bgSticker.style.backgroundSize = '100% 100%';
+                bgSticker.style.width = '100vw';
+                bgSticker.style.height = '100vh';
+                bgSticker.style.left = '0px';
+                bgSticker.style.top = '0px';
+                bgSticker.style.transform = 'rotate(0deg)';
+                bgSticker.setAttribute('data-angle', '0');
+            }
+        }
+    }, 100);
+});
 
 // --- 動畫套用邏輯 ---
 document.getElementById('animation-selector').addEventListener('change', function() {
