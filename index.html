@@ -1172,7 +1172,7 @@ window.createSticker = function createSticker(content, category, isImage) {
     }
 
     const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+    const screenHeight = window.visualViewport ? window.visualViewport.height : document.documentElement.clientHeight;
     const randomOffset = Math.random() * 20;
 
 // 定位邏輯
