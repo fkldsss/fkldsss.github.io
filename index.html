@@ -378,6 +378,14 @@
             user-select: none; -webkit-user-select: none;
             box-shadow: 0 -2px 6px rgba(0,173,181,0.3);
         }
+           #left-template-panel.dimmed::after,
+           #right-command-panel.playing::after,
+           #right-command-panel.dimmed::after,
+           #menu-toggle-tab.playing,
+           #menu-toggle-tab.dimmed {
+               opacity: 0.04 !important;
+               transition: opacity 0.3s ease;
+         }
         #category-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; }
 @media (pointer: coarse) {
     #category-container::-webkit-scrollbar {
@@ -691,18 +699,18 @@
                 <option value="clear-all">清除畫面所有特效</option>
             </select>
         </div>
-        <!-- ===== 透明度控制 ===== -->
-        <div style="margin-top: 9px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.15);">
-            <!-- 標題列（點擊展開/收合） -->
-            <div id="opacity-toggle-header" style="display: flex; justify-content: space-between; align-items: center; padding: 5px 12px; cursor: pointer; user-select: none; transition: background 0.15s;">
+        <!-- ===== 透明度控制  ===== -->
+        <div style="margin-top: 10px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.15); padding-top: 2px; padding-bottom: 2px;">
+            <!-- 標題列 -->
+            <div id="opacity-toggle-header" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; cursor: pointer; user-select: none; transition: background 0.2s;">
                 <span style="font-size: 12px; color: #aaa;">🎭 透明度變更</span>
                 <span id="opacity-toggle-icon" style="font-size: 12px; color: #666; transition: transform 0.3s;">▶</span>
             </div>
-            <!-- 內容區（預設收合） -->
-            <div id="opacity-content" style="display: none; padding: 0 12px 24px 12px; transition: all 0.3s ease;">
+            <!-- 內容區 -->
+            <div id="opacity-content" style="display: none; padding: 0 12px 12px 12px; transition: all 0.3s ease;">
                 <input type="range" id="opacity-slider" min="0" max="100" value="100" 
-                       style="width: 100%; accent-color: #00adb5; background: #333; border-radius: 4px; height: 4px; cursor: pointer; padding: 0;">
-                <div style="display: flex; justify-content: space-between; margin-top: 2px;">
+                       style="width: 100%; accent-color: #00adb5; background: #333; border-radius: 4px; height: 6px; cursor: pointer; padding: 0;">
+                <div style="display: flex; justify-content: space-between; margin-top: 4px;">
                     <span style="font-size: 9px; color: #555;">0%</span>
                     <button id="opacity-reset-btn" style="background: none; border: 1px solid #444; color: #888; font-size: 9px; padding: 0 10px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">↺ 重置</button>
                     <span style="font-size: 9px; color: #555;">100%</span>
@@ -792,6 +800,7 @@ document.getElementById('mode-toggle-box').addEventListener('pointerdown', funct
         let stickerCount = 0;
        window.currentMaxZIndex = 10; 
         let selectedSticker = null;
+       window.selectedSticker = null;
         let currentAction = null; 
         let targetElement = null;
         let startX, startY;
@@ -834,6 +843,7 @@ document.getElementById('mode-toggle-box').addEventListener('pointerdown', funct
                 if (existingLock) existingLock.remove();
 
                 selectedSticker = null;
+                window.selectedSticker = null;
             }
 
             deleteBtn.classList.remove('show');            
@@ -845,6 +855,7 @@ function selectSticker(element) {
     if (selectedSticker !== element) {
         window.clearSelection();
         selectedSticker = element;
+        window.selectedSticker = element;
         selectedSticker.classList.add('selected');
 
         // ---------- 建立鎖頭按鈕 ----------
@@ -1252,17 +1263,29 @@ if (category === 'bg') {
         // ----- 建立「縮放手柄」(resize) -----
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'resize-handle';
+        resizeHandle.textContent = '⤡'; 
+        resizeHandle.style.display = 'flex';
+        resizeHandle.style.alignItems = 'center';
+        resizeHandle.style.justifyContent = 'center';
+        resizeHandle.style.fontSize = '10px';
+        resizeHandle.style.color = '#fff';
         newSticker.appendChild(resizeHandle);
 
         // ----- 建立「旋轉手柄」(rotate) -----
         const rotateHandle = document.createElement('div');
         rotateHandle.className = 'rotate-handle';
+        rotateHandle.textContent = '↻'; 
+        rotateHandle.style.display = 'flex';
+        rotateHandle.style.alignItems = 'center';
+        rotateHandle.style.justifyContent = 'center';
+        rotateHandle.style.fontSize = '10px';
+        rotateHandle.style.color = '#fff';
         newSticker.appendChild(rotateHandle);
 
         // ----- 建立「鋪滿按鈕」 (短按: 拉伸；長按: 等比完整顯示) -----
         const expandBtn = document.createElement('div');
         expandBtn.className = 'expand-handle';
-        expandBtn.innerHTML = '⤢';
+        expandBtn.innerHTML = '⧄';
         newSticker.appendChild(expandBtn);
 
         let expandPressTimer = null;
@@ -1294,8 +1317,9 @@ if (category === 'bg') {
                         newSticker.style.height = h + 'px';
                         newSticker.style.left = (winW - w) / 2 + 'px';
                         newSticker.style.top = (winH - h) / 2 + 'px';
-                        newSticker.style.transform = 'rotate(0deg)';
-                        newSticker.setAttribute('data-angle', '0');
+                        const currentAngle = parseFloat(newSticker.getAttribute('data-angle')) || 0;
+                        newSticker.style.transform = `rotate(${currentAngle}deg)`;
+                        newSticker.setAttribute('data-angle', currentAngle);
                     };
                     tmpImg.src = src;
                 }
@@ -1344,10 +1368,22 @@ if (category === 'bg') {
 
         const handle = document.createElement('div');
         handle.className = 'resize-handle';
+        handle.textContent = '⤡';
+        handle.style.display = 'flex';
+        handle.style.alignItems = 'center';
+        handle.style.justifyContent = 'center';
+        handle.style.fontSize = '10px';
+        handle.style.color = '#fff';
         newSticker.appendChild(handle);
         
         const rotateHandle = document.createElement('div');
         rotateHandle.className = 'rotate-handle';
+        rotateHandle.textContent = '↻';
+        rotateHandle.style.display = 'flex';
+        rotateHandle.style.alignItems = 'center';
+        rotateHandle.style.justifyContent = 'center';
+        rotateHandle.style.fontSize = '10px';
+        rotateHandle.style.color = '#fff';
         newSticker.appendChild(rotateHandle);
     }
 
@@ -1655,97 +1691,139 @@ document.getElementById('canvas-container').addEventListener('click', function(e
     }
 });
 // ============================================================
-//  🎭 透明度控制功能
+//  🎭 透明度控制 (完全不干擾選取邏輯)
 // ============================================================
 (function() {
     const header = document.getElementById('opacity-toggle-header');
     const content = document.getElementById('opacity-content');
     const icon = document.getElementById('opacity-toggle-icon');
     const slider = document.getElementById('opacity-slider');
-    const valueDisplay = document.getElementById('opacity-value');
     const resetBtn = document.getElementById('opacity-reset-btn');
 
-    // ---------- 折疊開關 ----------
     let isOpen = false;
 
+    // ---------- 折疊開關 ----------
     header.addEventListener('click', function(e) {
         e.stopPropagation();
         isOpen = !isOpen;
         if (isOpen) {
             content.style.display = 'block';
             icon.textContent = '▼';
-            // 如果有選中貼紙，更新數值
-            if (selectedSticker) {
-                updateOpacityUI(selectedSticker);
-            }
+            // 展開時，啟用滑桿並讀取當前選中貼紙的透明度
+            updateSliderFromSelected();
         } else {
             content.style.display = 'none';
             icon.textContent = '▶';
+            // 收合時可選擇禁用滑桿（但不禁用也可以）
+            slider.disabled = true;
         }
     });
 
-    // ---------- 更新滑桿與數值顯示 ----------
-    function updateOpacityUI(sticker) {
+    // ---------- 從 selectedSticker 更新滑桿 ----------
+    function updateSliderFromSelected() {
+        const sticker = window.selectedSticker; // 直接讀取全域變數
         if (!sticker) {
             slider.disabled = true;
-            valueDisplay.textContent = '--';
             return;
         }
-
         // 檢查是否為 solid 背景
-        const isSolid = sticker.getAttribute('data-text-content') === 'solid';
-        if (isSolid) {
+        if (sticker.getAttribute('data-text-content') === 'solid') {
             slider.disabled = true;
-            valueDisplay.textContent = '--';
             return;
         }
-
         const currentOpacity = parseFloat(sticker.style.opacity);
         const percent = isNaN(currentOpacity) ? 100 : Math.round(currentOpacity * 100);
         slider.value = percent;
-        valueDisplay.textContent = percent + '%';
         slider.disabled = false;
     }
 
-    // ---------- 滑桿事件 ----------
+    // ---------- 滑桿拖動事件 ----------
     slider.addEventListener('input', function() {
-        if (!selectedSticker) return;
+        const sticker = window.selectedSticker;
+        if (!sticker) return;
+        if (sticker.getAttribute('data-text-content') === 'solid') return;
         const percent = parseInt(this.value);
-        const opacity = percent / 100;
-        selectedSticker.style.opacity = opacity;
-        valueDisplay.textContent = percent + '%';
+        sticker.style.opacity = percent / 100;
     });
 
     // ---------- 重置按鈕 ----------
     resetBtn.addEventListener('click', function() {
-        if (!selectedSticker) return;
-        selectedSticker.style.opacity = 1;
+        const sticker = window.selectedSticker;
+        if (!sticker) return;
+        if (sticker.getAttribute('data-text-content') === 'solid') return;
+        sticker.style.opacity = 1;
         slider.value = 100;
-        valueDisplay.textContent = '100%';
     });
 
-    // ---------- 擴充 selectSticker / clearSelection ----------
-    const originalSelectSticker = window.selectSticker;
-    const originalClearSelection = window.clearSelection;
-
-    window.selectSticker = function(element) {
-        originalSelectSticker.call(this, element);
-        if (isOpen) {
-            updateOpacityUI(selectedSticker);
+    // ---------- 監聽貼紙選取變更 (使用 pointerdown 事件) ----------
+    document.addEventListener('pointerdown', function(e) {
+        // 如果點擊的是透明度控制本身或其內部，不做任何事（讓它保持展開）
+        if (e.target.closest('#opacity-toggle-header') || e.target.closest('#opacity-content')) {
+            return;
         }
-    };
 
-    window.clearSelection = function() {
-        originalClearSelection.call(this);
         if (isOpen) {
-            updateOpacityUI(null);
+            content.style.display = 'none';
+            icon.textContent = '▶';
+            slider.disabled = true;
+            isOpen = false;
+            return; // 收合後不再執行後續
         }
-    };
+
+        // 如果點擊的是貼紙（且控制已展開，但理論上已收合，所以不會進來這裡）
+        // 保留原本的更新邏輯（但由於上方已 return，實際上不會執行到）
+        // 但如果之後想保留，可以放在這裡
+    });
 
     // ---------- 初始化 ----------
-    updateOpacityUI(null);
+    slider.disabled = true; // 預設禁用
 
-    console.log('🎭 透明度控制（可折疊）已啟用');
+    console.log('🎭 透明度控制 (獨立版) 已啟用');
+})();
+// ============================================================
+//  長按標籤變淡 4%（左側、右側、底部）
+// ============================================================
+(function() {
+    // 取得三個標籤元素（左側面板的偽元素需要透過面板本身控制）
+    const leftPanel = document.getElementById('left-template-panel');
+    const rightPanel = document.getElementById('right-command-panel');
+    const menuTab = document.getElementById('menu-toggle-tab');
+
+    function addDimClass(el) {
+        if (!el) return;
+        el.classList.add('dimmed');
+    }
+    function removeDimClass(el) {
+        if (!el) return;
+        el.classList.remove('dimmed');
+    }
+
+    // 為每個元素綁定 pointer 事件（同時支援滑鼠和觸控）
+    const targets = [leftPanel, rightPanel, menuTab];
+    targets.forEach(el => {
+        if (!el) return;
+
+        // 按下時添加 .dimmed
+        el.addEventListener('pointerdown', function(e) {
+            // 避免干擾內部按鈕的點擊（例如右側面板內的按鈕）
+            // 如果點擊的是內部元素，不觸發長按效果（只針對標籤本身）
+            // 但標籤本身通常是偽元素或點擊區域，因此直接添加
+            addDimClass(this);
+        });
+
+        // 鬆開或離開時移除 .dimmed
+        el.addEventListener('pointerup', function(e) {
+            removeDimClass(this);
+        });
+        el.addEventListener('pointerleave', function(e) {
+            removeDimClass(this);
+        });
+        el.addEventListener('pointercancel', function(e) {
+            removeDimClass(this);
+        });
+    });
+
+    console.log('✅ 長按標籤變淡功能已啟用');
 })();
 </script>
     <script src="gif-exporter.js"></script>
