@@ -907,10 +907,10 @@ function selectSticker(element) {
                 const isLocked = element.classList.contains('locked');
                 lockBtn.innerHTML = isLocked ? (newZLock ? '🔒⚡' : '🔒') : (newZLock ? '🔓⚡' : '🔓');
                 // 視覺回饋
-                element.style.transition = 'box-shadow 0.15s';
+                element.style.transition = 'box-shadow 0.35s';
                 element.style.boxShadow = newZLock ? '0 0 25px #ffd700' : '0 0 25px #00adb5';
                 setTimeout(() => { element.style.boxShadow = ''; }, 300);
-            }, 250); // 長按時間 250ms
+            }, 350); // 長按時間 350ms
         };
 
         const onPointerUp = function(e) {
@@ -1336,7 +1336,7 @@ if (category === 'bg') {
                     };
                     tmpImg.src = src;
                 }
-            }, 150);
+            }, 250);
         };
 
         const onExpandPointerUp = function(e) {
@@ -1525,7 +1525,7 @@ function handleMove(e) {
         const elHeight = targetElement.offsetHeight;
         const snapThreshold = 6;
         const overflowBuffer = 20;
-        const resistanceThreshold = 4;
+        const resistanceThreshold = 6;
 
         let newLeft = initialLeft + dx;
         let newTop = initialTop + dy;
@@ -1618,7 +1618,7 @@ function handleMove(e) {
         const elWidth = targetElement.offsetWidth;
         const elHeight = targetElement.offsetHeight;
         
-        const maxOverflow = 20;
+        const maxOverflow = 40;
         
         if (currentLeft < -maxOverflow) {
             targetElement.style.left = -maxOverflow + 'px';
