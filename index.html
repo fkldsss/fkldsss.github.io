@@ -517,10 +517,15 @@
     75% { transform: rotate(10deg); }
     100% { transform: rotate(0deg); }
 }
-        #mode-toggle-box {
-            position: absolute; bottom: calc(35px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 8px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
+#mode-toggle-box {
+            position: absolute; bottom: calc(72px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 8px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
         }
         #mode-toggle-box.show { opacity: 1; pointer-events: auto; }
+
+        #boundary-toggle-box {
+            position: absolute; bottom: calc(35px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 8px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
+        }
+        #boundary-toggle-box.show { opacity: 1; pointer-events: auto; }
         #mode-checkbox { cursor: pointer; accent-color: #00adb5; }
         
         .icon-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; margin-top: 5px; }
@@ -780,6 +785,10 @@
     <input type="checkbox" id="mode-checkbox">
     <span style="cursor: pointer; user-select: none;">自由變形</span>
 </div>
+<div id="boundary-toggle-box">
+    <input type="checkbox" id="boundary-checkbox">
+    <span style="cursor: pointer; user-select: none;">自由邊界</span>
+</div>
 
     <div id="menu-box">
         <div id="menu-toggle-tab" onclick="toggleMenuManual()">
@@ -809,6 +818,14 @@ document.getElementById('mode-toggle-box').addEventListener('pointerdown', funct
     e.preventDefault(); 
     checkbox.checked = !checkbox.checked;
     checkbox.dispatchEvent(new Event('change'));
+});
+
+document.getElementById('boundary-toggle-box').addEventListener('pointerdown', function(e) {
+    e.stopPropagation();    
+    const checkbox = document.getElementById('boundary-checkbox');    
+    if (e.target === checkbox) return;
+    e.preventDefault(); 
+    checkbox.checked = !checkbox.checked;
 });
 
         const thumbnailsContainer = document.getElementById('thumbnails-container');
@@ -871,6 +888,7 @@ document.getElementById('mode-toggle-box').addEventListener('pointerdown', funct
             deleteBtn.classList.remove('show');            
             document.getElementById('mode-checkbox').checked = false;           
             modeToggleBox.classList.remove('show');
+            document.getElementById('boundary-toggle-box').classList.remove('show');
         };
 
 function selectSticker(element) {
@@ -968,6 +986,7 @@ function selectSticker(element) {
 
     deleteBtn.classList.add('show');
     modeToggleBox.classList.add('show');
+    document.getElementById('boundary-toggle-box').classList.add('show');
 }
 
 function deleteSelectedSticker() {            if (window.templateManager && window.templateManager.isPlaying) {                return;            }            if (selectedSticker) {        if (selectedSticker.classList.contains('locked')) {            selectedSticker.style.transition = 'transform 0.1s ease';            selectedSticker.style.outline = '4px solid #ff5252';            setTimeout(() => {                selectedSticker.style.outline = 'none';            }, 200);                        return;        }                selectedSticker.remove();                window.clearSelection();            }}
@@ -1529,33 +1548,40 @@ function handleMove(e) {
 
         let newLeft = initialLeft + dx;
         let newTop = initialTop + dy;
-        // 邊緣吸附邏輯
-        if (Math.abs(newLeft) < snapThreshold) newLeft = 0;
-        if (Math.abs(newLeft - (screenWidth - elWidth)) < snapThreshold) newLeft = screenWidth - elWidth;
-        if (Math.abs(newTop) < snapThreshold) newTop = 0;
-        if (Math.abs(newTop - (screenHeight - elHeight)) < snapThreshold) newTop = screenHeight - elHeight;
+        
+        // 檢查是否啟用無邊界模式
+        const isUnrestricted = document.getElementById('boundary-checkbox') && document.getElementById('boundary-checkbox').checked;
 
-        const isAtLeft = initialLeft <= 0;
-        const isAtRight = initialLeft >= (screenWidth - elWidth);
-        const isAtTop = initialTop <= 0;
-        const isAtBottom = initialTop >= (screenHeight - elHeight);
-// 邊緣阻尼邏輯
-        if ((isAtLeft && dx < 0) || (isAtRight && dx > 0)) {
-            let dist = isAtLeft ? Math.abs(newLeft) : (newLeft - (screenWidth - elWidth));
-            if (dist < resistanceThreshold) {
-                newLeft = isAtLeft ? 0 : (screenWidth - elWidth);
-            } else {
-                let clampedDist = Math.min(dist, overflowBuffer);
-                newLeft = isAtLeft ? -clampedDist : (screenWidth - elWidth + clampedDist);
+        if (!isUnrestricted) {
+            // 邊緣吸附邏輯
+            if (Math.abs(newLeft) < snapThreshold) newLeft = 0;
+            if (Math.abs(newLeft - (screenWidth - elWidth)) < snapThreshold) newLeft = screenWidth - elWidth;
+            if (Math.abs(newTop) < snapThreshold) newTop = 0;
+            if (Math.abs(newTop - (screenHeight - elHeight)) < snapThreshold) newTop = screenHeight - elHeight;
+
+            const isAtLeft = initialLeft <= 0;
+            const isAtRight = initialLeft >= (screenWidth - elWidth);
+            const isAtTop = initialTop <= 0;
+            const isAtBottom = initialTop >= (screenHeight - elHeight);
+
+            // 邊緣阻尼邏輯
+            if ((isAtLeft && dx < 0) || (isAtRight && dx > 0)) {
+                let dist = isAtLeft ? Math.abs(newLeft) : (newLeft - (screenWidth - elWidth));
+                if (dist < resistanceThreshold) {
+                    newLeft = isAtLeft ? 0 : (screenWidth - elWidth);
+                } else {
+                    let clampedDist = Math.min(dist, overflowBuffer);
+                    newLeft = isAtLeft ? -clampedDist : (screenWidth - elWidth + clampedDist);
+                }
             }
-        }
-        if ((isAtTop && dy < 0) || (isAtBottom && dy > 0)) {
-            let dist = isAtTop ? Math.abs(newTop) : (newTop - (screenHeight - elHeight));
-            if (dist < resistanceThreshold) {
-                newTop = isAtTop ? 0 : (screenHeight - elHeight);
-            } else {
-                let clampedDist = Math.min(dist, overflowBuffer);
-                newTop = isAtTop ? -clampedDist : (screenHeight - elHeight + clampedDist);
+            if ((isAtTop && dy < 0) || (isAtBottom && dy > 0)) {
+                let dist = isAtTop ? Math.abs(newTop) : (newTop - (screenHeight - elHeight));
+                if (dist < resistanceThreshold) {
+                    newTop = isAtTop ? 0 : (screenHeight - elHeight);
+                } else {
+                    let clampedDist = Math.min(dist, overflowBuffer);
+                    newTop = isAtTop ? -clampedDist : (screenHeight - elHeight + clampedDist);
+                }
             }
         }
 
@@ -1607,31 +1633,30 @@ function handleMove(e) {
 
         function handleEnd() {
     if (targetElement) {
-        const parent = targetElement.parentElement || canvasContainer;
-        const parentWidth = parent.clientWidth;
-        const parentHeight = parent.clientHeight;
+        const isUnrestricted = document.getElementById('boundary-checkbox') && document.getElementById('boundary-checkbox').checked;
         
-        let currentLeft = parseFloat(targetElement.style.left) || 0;
-        let currentTop = parseFloat(targetElement.style.top) || 0;
-        
-        const rect = targetElement.getBoundingClientRect();
-        const elWidth = targetElement.offsetWidth;
-        const elHeight = targetElement.offsetHeight;
-        
-        const maxOverflow = 40;
-        
-        if (currentLeft < -maxOverflow) {
-            targetElement.style.left = -maxOverflow + 'px';
-        } else if (currentLeft + elWidth > parentWidth + maxOverflow) {
-            targetElement.style.left = (parentWidth - elWidth + maxOverflow) + 'px';
-        }
-        
-        if (currentTop < -maxOverflow) {
-            targetElement.style.top = -maxOverflow + 'px';
-        } else if (currentTop + elHeight > parentHeight + maxOverflow) {
-            targetElement.style.top = (parentHeight - elHeight + maxOverflow) + 'px';
-        }
-        
+        if (!isUnrestricted) {
+            const parent = targetElement.parentElement || canvasContainer;
+            const parentWidth = parent.clientWidth;
+            const parentHeight = parent.clientHeight;            
+            let currentLeft = parseFloat(targetElement.style.left) || 0;
+            let currentTop = parseFloat(targetElement.style.top) || 0;            
+            const elWidth = targetElement.offsetWidth;
+            const elHeight = targetElement.offsetHeight;
+            
+            const maxOverflow = 40;
+            
+            if (currentLeft < -maxOverflow) {
+                targetElement.style.left = -maxOverflow + 'px';
+            } else if (currentLeft + elWidth > parentWidth + maxOverflow) {
+                targetElement.style.left = (parentWidth - elWidth + maxOverflow) + 'px';
+            }            
+            if (currentTop < -maxOverflow) {
+                targetElement.style.top = -maxOverflow + 'px';
+            } else if (currentTop + elHeight > parentHeight + maxOverflow) {
+                targetElement.style.top = (parentHeight - elHeight + maxOverflow) + 'px';
+            }
+        }        
         targetElement.style.willChange = 'auto';
         targetElement.classList.remove('is-dragging');
     }
@@ -1642,14 +1667,18 @@ function handleMove(e) {
         window.addEventListener('resize', function() {
     if (resizeTimeout) clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
-        document.querySelectorAll('.sticker').forEach(sticker => {
-            let currentLeft = sticker.offsetLeft;
-            let currentTop = sticker.offsetTop;
-            const maxLeft = window.innerWidth - sticker.offsetWidth;
-            const maxTop = window.innerHeight - sticker.offsetHeight;
-            if (currentLeft > maxLeft) sticker.style.left = Math.max(0, maxLeft) + 'px';
-            if (currentTop > maxTop) sticker.style.top = Math.max(0, maxTop) + 'px';
-        });
+        const isUnrestricted = document.getElementById('boundary-checkbox') && document.getElementById('boundary-checkbox').checked;
+        
+        if (!isUnrestricted) {
+            document.querySelectorAll('.sticker').forEach(sticker => {
+                let currentLeft = sticker.offsetLeft;
+                let currentTop = sticker.offsetTop;
+                const maxLeft = window.innerWidth - sticker.offsetWidth;
+                const maxTop = window.innerHeight - sticker.offsetHeight;
+                if (currentLeft > maxLeft) sticker.style.left = Math.max(0, maxLeft) + 'px';
+                if (currentTop > maxTop) sticker.style.top = Math.max(0, maxTop) + 'px';
+            });
+        }
         
         // 手機轉向時，背景貼紙自動重新鋪滿
         const bgSticker = document.querySelector('.bg-sticker');
@@ -1657,7 +1686,6 @@ function handleMove(e) {
             const isFullscreen = bgSticker.offsetWidth >= window.innerWidth - 10 || 
                                  bgSticker.offsetHeight >= window.innerHeight - 10;
             if (isFullscreen) {
-                // 短按 Expand 的效果：重新鋪滿
                 bgSticker.style.backgroundSize = '100% 100%';
                 bgSticker.style.width = '100vw';
                 bgSticker.style.height = '100vh';
