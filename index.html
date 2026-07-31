@@ -112,8 +112,8 @@
         .lock-handle {
             display: none;
             position: absolute;
-            top: 6px;
-            right: 6px;
+            top: 5px;
+            right: 5px;
             width: 26px;
             height: 26px;
             background-color: #ff5252;
@@ -130,6 +130,9 @@
             z-index: 20;
             user-select: none;
         }
+        .sticker.lock-hidden .lock-handle {
+    display: none !important;
+       }
         .sticker.selected .lock-handle {
             display: flex;
             align-items: center;
@@ -137,8 +140,8 @@
             opacity: 0.6;
         }
         .sticker.locked .lock-handle {
-            top: 8px;
-            right: 8px;
+            top: 6px;
+            right: 6px;
             width: 32px;
             height: 32px;
             opacity: 0.4;
@@ -778,6 +781,27 @@
     </div>
 
     <div id="canvas-container"></div>
+    <div id="floating-lock" style="
+        position: fixed;
+        top: calc(20px + env(safe-area-inset-top, 0px));
+        right: calc(20px + env(safe-area-inset-right, 0px));
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 82, 82, 0.85);
+        border: 2px solid #fff;
+        border-radius: 50%;
+        color: white;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 1001;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        user-select: none;
+        transition: opacity 0.2s ease;
+        backdrop-filter: blur(4px);
+    "></div>
         
     <button id="delete-btn">🗑️</button>
         
@@ -884,12 +908,58 @@ document.getElementById('boundary-toggle-box').addEventListener('pointerdown', f
                 selectedSticker = null;
                 window.selectedSticker = null;
             }
-
+                const floatingLock = document.getElementById('floating-lock');
+                if (floatingLock) {
+                floatingLock.style.display = 'none';
+                floatingLock._targetSticker = null;
+            }
             deleteBtn.classList.remove('show');            
             document.getElementById('mode-checkbox').checked = false;           
             modeToggleBox.classList.remove('show');
             document.getElementById('boundary-toggle-box').classList.remove('show');
         };
+
+function updateLockVisibility(sticker) {
+    if (!sticker) {
+        const floatingLock = document.getElementById('floating-lock');
+        if (floatingLock) {
+            floatingLock.style.display = 'none';
+            floatingLock._targetSticker = null;
+        }
+        return;
+    }
+
+    const threshold = 70;
+    const width = sticker.offsetWidth;
+    const height = sticker.offsetHeight;
+    const isTooSmall = (width < threshold || height < threshold);
+    const isSelected = (window.selectedSticker === sticker);
+    const floatingLock = document.getElementById('floating-lock');
+    const shouldHide = isTooSmall;
+    const currentlyHidden = sticker.classList.contains('lock-hidden');
+    if (shouldHide !== currentlyHidden) {
+        sticker.classList.toggle('lock-hidden', shouldHide);
+    }
+
+    const shouldShowFloating = isTooSmall && isSelected;
+    if (!floatingLock) return;
+    const currentlyVisible = (floatingLock.style.display === 'flex');
+    if (shouldShowFloating !== currentlyVisible) {
+        floatingLock.style.display = shouldShowFloating ? 'flex' : 'none';
+        if (shouldShowFloating) {
+            const isZLocked = sticker.getAttribute('data-z-locked') === 'true';
+            const isLocked = sticker.classList.contains('locked');
+            floatingLock.textContent = isLocked ? (isZLocked ? '🔒⚡' : '🔒') : (isZLocked ? '🔓⚡' : '🔓');
+            floatingLock._targetSticker = sticker;
+        } else {
+            floatingLock._targetSticker = null;
+        }
+    } else if (shouldShowFloating) {
+        const isZLocked = sticker.getAttribute('data-z-locked') === 'true';
+        const isLocked = sticker.classList.contains('locked');
+        floatingLock.textContent = isLocked ? (isZLocked ? '🔒⚡' : '🔒') : (isZLocked ? '🔓⚡' : '🔓');
+    }
+}
 
 function selectSticker(element) {
     if (selectedSticker !== element) {
@@ -970,6 +1040,7 @@ function selectSticker(element) {
         });
 
         selectedSticker.appendChild(lockBtn);
+        updateLockVisibility(element);
 
         // ---------- z-index 管理（加入鎖定判斷） ----------
         const stickerType = selectedSticker.getAttribute('data-type');
@@ -1606,6 +1677,7 @@ function handleMove(e) {
             targetElement.style.backgroundSize = '100% 100%';
             targetElement.style.width = newWidth + 'px';
             targetElement.style.height = newHeight + 'px';
+            updateLockVisibility(targetElement);
         } else {
             targetElement.style.backgroundSize = 'contain';
             const ratioX = newWidth / initialWidth;
@@ -1613,6 +1685,7 @@ function handleMove(e) {
             const scale = Math.max(ratioX, ratioY);
             targetElement.style.width = (initialWidth * scale) + 'px';
             targetElement.style.height = (initialHeight * scale) + 'px';
+            updateLockVisibility(targetElement);
         }
     } 
     else if (currentAction === 'rotate') {
@@ -1910,6 +1983,70 @@ document.getElementById('canvas-container').addEventListener('click', function(e
     });
 
     console.log('✅ 長按標籤變淡功能已啟用');
+})();
+// ---------- 浮動鎖頭 事件綁定（獨立於 selectSticker，直接使用 window.selectedSticker） ----------
+(function() {
+    const floatingLock = document.getElementById('floating-lock');
+    if (!floatingLock) return;
+
+    let floatingPressTimer = null;
+    let floatingIsLongPress = false;
+
+    const onFloatingPointerDown = function(e) {
+        e.stopPropagation();
+        const sticker = window.selectedSticker;
+        if (!sticker) return;
+        floatingIsLongPress = false;
+        floatingPressTimer = setTimeout(() => {
+            floatingIsLongPress = true;
+            const currentZLock = sticker.getAttribute('data-z-locked') === 'true';
+            const newZLock = !currentZLock;
+            sticker.setAttribute('data-z-locked', newZLock ? 'true' : 'false');
+            const isLocked = sticker.classList.contains('locked');
+            floatingLock.textContent = isLocked ? (newZLock ? '🔒⚡' : '🔒') : (newZLock ? '🔓⚡' : '🔓');
+            sticker.style.transition = 'box-shadow 0.35s';
+            sticker.style.boxShadow = newZLock ? '0 0 25px #ffd700' : '0 0 25px #00adb5';
+            setTimeout(() => { sticker.style.boxShadow = ''; }, 300);
+            const originalLock = sticker.querySelector('.lock-handle');
+            if (originalLock) {
+                const isLockedNow = sticker.classList.contains('locked');
+                originalLock.textContent = isLockedNow ? (newZLock ? '🔒⚡' : '🔒') : (newZLock ? '🔓⚡' : '🔓');
+            }
+        }, 500);
+    };
+
+    const onFloatingPointerUp = function(e) {
+        e.stopPropagation();
+        clearTimeout(floatingPressTimer);
+        const sticker = window.selectedSticker;
+        if (!sticker) return;
+        if (!floatingIsLongPress) {
+            sticker.classList.toggle('locked');
+            const isLocked = sticker.classList.contains('locked');
+            const isZLocked = sticker.getAttribute('data-z-locked') === 'true';
+            floatingLock.textContent = isLocked ? (isZLocked ? '🔒⚡' : '🔒') : (isZLocked ? '🔓⚡' : '🔓');
+            const originalLock = sticker.querySelector('.lock-handle');
+            if (originalLock) {
+                originalLock.textContent = isLocked ? (isZLocked ? '🔒⚡' : '🔒') : (isZLocked ? '🔓⚡' : '🔓');
+            }
+        }
+        floatingIsLongPress = false;
+    };
+
+    const onFloatingPointerLeave = function(e) {
+        clearTimeout(floatingPressTimer);
+        floatingIsLongPress = false;
+    };
+
+    floatingLock.addEventListener('pointerdown', onFloatingPointerDown);
+    floatingLock.addEventListener('pointerup', onFloatingPointerUp);
+    floatingLock.addEventListener('pointerleave', onFloatingPointerLeave);
+
+    floatingLock.addEventListener('touchstart', onFloatingPointerDown, { passive: false });
+    floatingLock.addEventListener('touchend', onFloatingPointerUp, { passive: false });
+    floatingLock.addEventListener('touchcancel', onFloatingPointerLeave, { passive: false });
+
+    console.log('✅ 浮動鎖頭已獨立綁定，直接使用 window.selectedSticker');
 })();
 </script>
     <script src="gif-exporter.js"></script>
