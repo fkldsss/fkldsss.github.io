@@ -2,99 +2,141 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Free Kaleidosss 操作說明</title>
+    <title>Free Kaleidosss 操作說明 / Instructions / 操作説明</title>
     <style>
-        body { background: #1a1a1a; color: #ccc; font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        body { background: #1a1a1a; color: #ccc; font-family: sans-serif; padding: 20px; max-width: 900px; margin: auto; }
         h1 { color: #00adb5; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        h2 { color: #f39c12; margin-top: 24px; }
+        h2 { color: #f39c12; margin-top: 28px; border-bottom: 1px solid #2a2a2a; padding-bottom: 4px; }
         kbd { background: #333; padding: 2px 8px; border-radius: 4px; border: 1px solid #555; font-size: 13px; color: #fff; }
         table { width: 100%; border-collapse: collapse; margin: 12px 0; }
         th { text-align: left; background: #2a2a2a; padding: 8px; border-bottom: 2px solid #444; }
         td { padding: 8px; border-bottom: 1px solid #333; vertical-align: top; }
-        td:first-child { width: 140px; }
-        td:last-child { color: #aaa; }
+        td:first-child { width: 130px; font-weight: bold; color: #ddd; }
+        td:nth-child(2) { color: #bbb; }
+        td:nth-child(3) { color: #aaa; font-style: italic; }
         hr { border: none; border-top: 1px solid #333; margin: 20px 0; }
         .note { background: #252525; padding: 12px; border-radius: 6px; border-left: 3px solid #00adb5; margin: 12px 0; }
+        .lang-tag { color: #888; font-size: 12px; margin-right: 6px; }
+        .en { color: #8ab4f8; }
+        .jp { color: #f7c948; }
+        .zh { color: #a8d8a8; }
     </style>
 </head>
 <body>
-<h1>🎨 Free Kaleidosss 操作說明</h1>
-<p style="color: #888;">此文件說明所有按鍵、手勢與功能用途，方便您快速上手。</p>
+<h1>🎨 Free Kaleidosss 操作說明 / Instructions / 操作説明</h1>
+<p style="color: #888;">此文件說明所有按鍵、手勢與功能用途，方便您快速上手。<br>
+<span class="en">This document explains all keys, gestures, and functions for a quick start.</span><br>
+<span class="jp">このドキュメントでは、すべてのキー操作・ジェスチャー・機能を説明し、すぐに使い始められます。</span></p>
 
-<h2>📌 滑鼠／觸控操作</h2>
+<h2>📌 滑鼠／觸控操作 / Mouse / Touch / マウス・タッチ操作</h2>
 <table>
-    <tr><th>操作</th><th>功能</th></tr>
-    <tr><td>點擊貼紙</td><td>選取貼紙（顯示虛線框），並將其提升至最上層</td></tr>
-    <tr><td>拖曳貼紙</td><td>移動貼紙位置</td></tr>
-    <tr><td>拖曳右下角 <kbd>◢</kbd></td><td>縮放貼紙（勾選 <kbd>自由變形</kbd> 可不按比例縮放）</td></tr>
-    <tr><td>長按 ⤢ = 等比鋪滿畫布</td></tr>
-    <tr><td>拖曳頂部 <kbd>●</kbd></td><td>旋轉貼紙</td></tr>
-    <tr><td>雙擊貼紙</td><td>切換鎖定／解鎖（鎖定後不可移動／縮放／旋轉）</td></tr>
-    <tr><td>長按鎖頭 <kbd>🔓</kbd>／<kbd>🔒</kbd></td><td>切換圖層（⚡ 圖示出現，貼紙轉為底層）</td></tr>
+    <tr><th>操作 / Action / 操作</th><th>功能 / Function / 機能</th></tr>
+    <tr><td>點擊貼紙<br><span class="en">Click a sticker</span><br><span class="jp">ステッカーをクリック</span></td>
+        <td>選取貼紙（顯示虛線框），並將其提升至最上層<br><span class="en">Select sticker (dashed border) and bring to front</span><br><span class="jp">ステッカーを選択（点線枠表示）、最前面に移動</span></td></tr>
+    <tr><td>拖曳貼紙<br><span class="en">Drag a sticker</span><br><span class="jp">ステッカーをドラッグ</span></td>
+        <td>移動貼紙位置<br><span class="en">Move sticker position</span><br><span class="jp">ステッカーの位置を移動</span></td></tr>
+    <tr><td>拖曳右下角 <kbd>◢</kbd><br><span class="en">Drag bottom-right <kbd>◢</kbd></span><br><span class="jp">右下 <kbd>◢</kbd> をドラッグ</span></td>
+        <td>縮放貼紙（勾選 <kbd>自由變形</kbd> 可不按比例縮放）<br><span class="en">Scale sticker (check <kbd>Free Deform</kbd> for non‑proportional)</span><br><span class="jp">ステッカーを拡大縮小（<kbd>自由変形</kbd> にチェックで縦横比固定解除）</span></td></tr>
+    <tr><td>長按 ⤢ = 等比鋪滿畫布<br><span class="en">Long press ⤢ = fill canvas proportionally</span><br><span class="jp">⤢ 長押し = アスペクト比維持でキャンバスにフィット</span></td>
+        <td>（無額外功能）<br><span class="en">(no extra function)</span><br><span class="jp">（追加機能なし）</span></td></tr>
+    <tr><td>拖曳頂部 <kbd>●</kbd><br><span class="en">Drag top <kbd>●</kbd></span><br><span class="jp">上部 <kbd>●</kbd> をドラッグ</span></td>
+        <td>旋轉貼紙<br><span class="en">Rotate sticker</span><br><span class="jp">ステッカーを回転</span></td></tr>
+    <tr><td>雙擊貼紙<br><span class="en">Double-click sticker</span><br><span class="jp">ステッカーをダブルクリック</span></td>
+        <td>切換鎖定／解鎖（鎖定後不可移動／縮放／旋轉）<br><span class="en">Toggle lock/unlock (locked: no move/scale/rotate)</span><br><span class="jp">ロック／ロック解除を切り替え（ロック中は移動・拡縮・回転不可）</span></td></tr>
+    <tr><td>長按鎖頭 <kbd>🔓</kbd>／<kbd>🔒</kbd><br><span class="en">Long press padlock <kbd>🔓</kbd>/<kbd>🔒</kbd></span><br><span class="jp">鍵アイコン <kbd>🔓</kbd>/<kbd>🔒</kbd> を長押し</span></td>
+        <td>切換圖層（⚡ 圖示出現，貼紙轉為底層）<br><span class="en">Toggle z‑index lock (⚡ appears, sticker sent to background)</span><br><span class="jp">レイヤー切替（⚡ 表示でステッカーが最背面に）</span></td></tr>
 </table>
 
-<h2>🔘 右側「指令中心」按鈕</h2>
+<h2>🔘 右側「指令中心」按鈕 / Right Control Panel / 右側「コマンドセンター」ボタン</h2>
 <table>
-    <tr><th>按鈕</th><th>功能</th></tr>
-    <tr><td><kbd>📸 Gallery</kbd></td><td>將目前畫布內容儲存為一個「影格」（顯示於左側時間軸）</td></tr>
-    <tr><td><kbd>📋 Copy</kbd></td><td>匯出所有影格為 JSON 文字（備份用）</td></tr>
-    <tr><td><kbd>🎞️ 匯出連續 PNG</kbd></td><td>將所有影格匯出為 ZIP 壓縮包（內含 PNG 圖片序列）</td></tr>
-    <tr><td><kbd>🔓 全部解鎖／長按清空</kbd></td><td>短按：全部貼紙解鎖<br>長按（0.95 秒）：清空畫布上「所有」貼紙（含鎖定）</td></tr>
-    <tr><td><kbd>⬆ 雙擊匯入指令庫</kbd></td><td>從右側文字框匯入先前備份的 JSON 影格數據</td></tr>
-    <tr><td><kbd>📁</kbd></td><td>載入 .txt 備份檔（自動填入文字框）</td></tr>
+    <tr><th>按鈕 / Button / ボタン</th><th>功能 / Function / 機能</th></tr>
+    <tr><td><kbd>📸 Gallery</kbd></td>
+        <td>將目前畫布內容儲存為一個「影格」（顯示於左側時間軸）<br><span class="en">Save current canvas as a "frame" (shown in left timeline)</span><br><span class="jp">現在のキャンバスを「フレーム」として保存（左側タイムラインに表示）</span></td></tr>
+    <tr><td><kbd>📋 Copy</kbd></td>
+        <td>匯出所有影格為 JSON 文字（備份用）<br><span class="en">Export all frames as JSON text (for backup)</span><br><span class="jp">全フレームをJSONテキストとしてエクスポート（バックアップ用）</span></td></tr>
+    <tr><td><kbd>🎞️ 匯出連續 PNG</kbd><br><span class="en">Export PNG sequence</span><br><span class="jp">連続PNG書き出し</span></td>
+        <td>將所有影格匯出為 ZIP 壓縮包（內含 PNG 圖片序列）<br><span class="en">Export all frames as ZIP archive (PNG sequence inside)</span><br><span class="jp">全フレームをZIP圧縮ファイルに書き出し（PNGシーケンス）</span></td></tr>
+    <tr><td><kbd>🔓 全部解鎖／長按清空</kbd><br><span class="en">Unlock all / long press clear</span><br><span class="jp">全ロック解除／長押しで全消去</span></td>
+        <td>短按：全部貼紙解鎖<br>長按（0.95 秒）：清空畫布上「所有」貼紙（含鎖定）<br><span class="en">Tap: unlock all stickers. Long press (0.95s): delete ALL stickers (including locked)</span><br><span class="jp">タップ：全ステッカーのロック解除。長押し（0.95秒）：全ステッカーを削除（ロック中も含む）</span></td></tr>
+    <tr><td><kbd>⬆ 雙擊匯入指令庫</kbd><br><span class="en">Double-click import from library</span><br><span class="jp">ダブルクリックでコマンド読み込み</span></td>
+        <td>從右側文字框匯入先前備份的 JSON 影格數據<br><span class="en">Import JSON frame data from the text box (restore backup)</span><br><span class="jp">右側テキストボックスからJSONフレームデータを読み込み（バックアップ復元）</span></td></tr>
+    <tr><td><kbd>📁</kbd></td>
+        <td>載入 .txt 備份檔（自動填入文字框）<br><span class="en">Load .txt backup file (auto-fill text box)</span><br><span class="jp">.txtバックアップファイルを読み込み（テキストボックスに自動入力）</span></td></tr>
 </table>
 
-<h2>🎬 左側「範本播放器」</h2>
+<h2>🎬 左側「範本播放器」 / Left Timeline Player / 左側「テンプレートプレイヤー」</h2>
 <table>
-    <tr><th>項目</th><th>功能</th></tr>
-    <tr><td><kbd>⏰ 播放速度</kbd></td><td>調整播放時每幀停留時間（0.4～10 秒）</td></tr>
-    <tr><td><kbd>▶ Play</kbd></td><td>播放時間軸上的所有影格（循環播放）</td></tr>
-    <tr><td><kbd>■ Stop</kbd></td><td>停止播放，回到目前影格</td></tr>
-    <tr><td>點擊影格卡片</td><td>預覽該影格內容</td></tr>
-    <tr><td>雙擊影格名稱</td><td>重新命名影格（最多 8 字）</td></tr>
-    <tr><td>右鍵點擊影格卡片</td><td>複製該影格（插入在原影格下方）</td></tr>
-    <tr><td>拖曳影格卡片</td><td>調整影格播放順序（拖曳後需點 <kbd>📋 Copy</kbd> 確認）</td></tr>
+    <tr><th>項目 / Item / 項目</th><th>功能 / Function / 機能</th></tr>
+    <tr><td><kbd>⏰ 播放速度</kbd><br><span class="en">Playback speed</span><br><span class="jp">再生速度</span></td>
+        <td>調整播放時每幀停留時間（0.4～10 秒）<br><span class="en">Adjust frame duration (0.4–10s)</span><br><span class="jp">各フレームの表示時間を調整（0.4～10秒）</span></td></tr>
+    <tr><td><kbd>▶ Play</kbd></td>
+        <td>播放時間軸上的所有影格（循環播放）<br><span class="en">Play all frames in timeline (loop)</span><br><span class="jp">タイムラインの全フレームを再生（ループ）</span></td></tr>
+    <tr><td><kbd>■ Stop</kbd></td>
+        <td>停止播放，回到目前影格<br><span class="en">Stop playback, return to current frame</span><br><span class="jp">再生停止、現在のフレームに戻る</span></td></tr>
+    <tr><td>點擊影格卡片<br><span class="en">Click frame card</span><br><span class="jp">フレームカードをクリック</span></td>
+        <td>預覽該影格內容<br><span class="en">Preview that frame</span><br><span class="jp">そのフレームをプレビュー</span></td></tr>
+    <tr><td>雙擊影格名稱<br><span class="en">Double-click frame name</span><br><span class="jp">フレーム名をダブルクリック</span></td>
+        <td>重新命名影格（最多 8 字）<br><span class="en">Rename frame (max 8 chars)</span><br><span class="jp">フレーム名を変更（最大8文字）</span></td></tr>
+    <tr><td>右鍵點擊影格卡片<br><span class="en">Right-click frame card</span><br><span class="jp">フレームカードを右クリック</span></td>
+        <td>複製該影格（插入在原影格下方）<br><span class="en">Duplicate that frame (inserted below original)</span><br><span class="jp">そのフレームを複製（元のフレームの下に挿入）</span></td></tr>
+    <tr><td>拖曳影格卡片<br><span class="en">Drag frame card</span><br><span class="jp">フレームカードをドラッグ</span></td>
+        <td>調整影格播放順序（拖曳後需點 <kbd>📋 Copy</kbd> 確認）<br><span class="en">Reorder frames (after drag, click <kbd>📋 Copy</kbd> to confirm)</span><br><span class="jp">フレームの順序を変更（ドラッグ後 <kbd>📋 Copy</kbd> をクリックして確定）</span></td></tr>
 </table>
 
-<h2>🗑️ 垃圾桶按鈕</h2>
+<h2>🗑️ 垃圾桶按鈕 / Trash Button / ゴミ箱ボタン</h2>
 <table>
-    <tr><th>操作</th><th>功能</th></tr>
-    <tr><td>點擊 <kbd>🗑️</kbd></td><td>刪除目前選取的貼紙（若已選取）</td></tr>
-    <tr><td>長按 <kbd>🗑️</kbd>（0.95 秒）</td><td>清除畫布上所有「未鎖定」的貼紙</td></tr>
+    <tr><th>操作 / Action / 操作</th><th>功能 / Function / 機能</th></tr>
+    <tr><td>點擊 <kbd>🗑️</kbd><br><span class="en">Click <kbd>🗑️</kbd></span><br><span class="jp"><kbd>🗑️</kbd> をクリック</span></td>
+        <td>刪除目前選取的貼紙（若已選取）<br><span class="en">Delete currently selected sticker (if any)</span><br><span class="jp">現在選択中のステッカーを削除（選択されている場合）</span></td></tr>
+    <tr><td>長按 <kbd>🗑️</kbd>（0.95 秒）<br><span class="en">Long press <kbd>🗑️</kbd> (0.95s)</span><br><span class="jp"><kbd>🗑️</kbd> を長押し（0.95秒）</span></td>
+        <td>清除畫布上所有「未鎖定」的貼紙<br><span class="en">Delete all "unlocked" stickers on canvas</span><br><span class="jp">キャンバス上の「ロック解除」された全ステッカーを削除</span></td></tr>
 </table>
 
-<h2>⌨️ 鍵盤快捷鍵</h2>
+<h2>⌨️ 鍵盤快捷鍵 / Keyboard Shortcuts / キーボードショートカット</h2>
 <table>
-    <tr><th>按鍵</th><th>功能</th></tr>
-    <tr><td><kbd>Delete</kbd> 或 <kbd>Backspace</kbd></td><td>刪除目前選取的貼紙</td></tr>
+    <tr><th>按鍵 / Key / キー</th><th>功能 / Function / 機能</th></tr>
+    <tr><td><kbd>Delete</kbd> 或 <kbd>Backspace</kbd><br><span class="en"><kbd>Delete</kbd> or <kbd>Backspace</kbd></span><br><span class="jp"><kbd>Delete</kbd> または <kbd>Backspace</kbd></span></td>
+        <td>刪除目前選取的貼紙<br><span class="en">Delete currently selected sticker</span><br><span class="jp">現在選択中のステッカーを削除</span></td></tr>
 </table>
 
-<h2>📂 貼紙來源（下方選單）</h2>
+<h2>📂 貼紙來源（下方選單） / Sticker Sources (bottom menu) / ステッカーソース（下部メニュー）</h2>
 <table>
-    <tr><th>分類</th><th>內容</th></tr>
-    <tr><td><kbd>📂 上傳</kbd></td><td>上傳自己的圖片（可複選，支援 Base64 儲存）</td></tr>
-    <tr><td><kbd>頭部／髮型／樣貌</kbd></td><td>內建範例圖片</td></tr>
-    <tr><td><kbd>文字／繪製</kbd></td><td>表情符號與繪圖字元</td></tr>
+    <tr><th>分類 / Category / カテゴリ</th><th>內容 / Content / 内容</th></tr>
+    <tr><td><kbd>📂 上傳</kbd><br><span class="en">Upload</span><br><span class="jp">アップロード</span></td>
+        <td>上傳自己的圖片（可複選，支援 Base64 儲存）<br><span class="en">Upload own images (multi-select, Base64 storage)</span><br><span class="jp">自分の画像をアップロード（複数選択可、Base64保存対応）</span></td></tr>
+    <tr><td><kbd>頭部／髮型／樣貌</kbd><br><span class="en">Head / Hairstyle / Looks</span><br><span class="jp">頭部／髪型／見た目</span></td>
+        <td>內建範例圖片<br><span class="en">Built-in sample images</span><br><span class="jp">内蔵サンプル画像</span></td></tr>
+    <tr><td><kbd>文字／繪製</kbd><br><span class="en">Text / Drawing</span><br><span class="jp">テキスト／描画</span></td>
+        <td>表情符號與繪圖字元<br><span class="en">Emoji and drawing characters</span><br><span class="jp">絵文字と描画文字</span></td></tr>
 </table>
 
-<h2>🎨 貼紙特效（動態效果下拉選單）</h2>
+<h2>🎨 貼紙特效（動態效果下拉選單） / Sticker Effects (animation dropdown) / ステッカーエフェクト（アニメーションドロップダウン）</h2>
 <table>
-    <tr><th>選項</th><th>效果</th></tr>
-    <tr><td>呼吸／震動／旋轉／閃爍／浮動⋯</td><td>為「目前選取的貼紙」套用動畫特效</td></tr>
-    <tr><td><kbd>清除畫面所有特效</kbd></td><td>移除所有貼紙的動畫特效</td></tr>
+    <tr><th>選項 / Option / オプション</th><th>效果 / Effect / 効果</th></tr>
+    <tr><td>呼吸／震動／旋轉／閃爍／浮動⋯<br><span class="en">Breath / Shake / Rotate / Blink / Float …</span><br><span class="jp">ブレス／シェイク／回転／点滅／フロート…</span></td>
+        <td>為「目前選取的貼紙」套用動畫特效<br><span class="en">Apply animation effect to the selected sticker</span><br><span class="jp">「現在選択中のステッカー」にアニメーションエフェクトを適用</span></td></tr>
+    <tr><td><kbd>清除畫面所有特效</kbd><br><span class="en">Clear all effects</span><br><span class="jp">全エフェクトをクリア</span></td>
+        <td>移除所有貼紙的動畫特效<br><span class="en">Remove all sticker animation effects</span><br><span class="jp">全ステッカーのアニメーションエフェクトを削除</span></td></tr>
 </table>
 
-<h2>🧩 其他重要功能</h2>
+<h2>🧩 其他重要功能 / Other Important Features / その他の重要な機能</h2>
 <table>
-    <tr><th>功能</th><th>說明</th></tr>
-    <tr><td>鎖定貼紙</td><td>點擊鎖頭 <kbd>🔓</kbd> 可鎖定貼紙（鎖定後不可編輯，且無法被長按垃圾桶刪除）</td></tr>
-    <tr><td>z-index 鎖定（⚡）</td><td>長按鎖頭可切換，鎖定後點擊貼紙不會浮到最上層</td></tr>
-    <tr><td>自由變形模式</td><td>勾選後，縮放貼紙時可任意拉伸（不保持比例）</td></tr>
-    <tr><td>自由邊界模式</td><td>勾選後，縮放及拖拉貼紙都可任意拉伸到畫布外</td></tr>
-    <tr><td>瀏覽器記憶體</td><td>上傳的圖片會自動儲存在 localStorage，重新整理網頁不會消失</td></tr>
+    <tr><th>功能 / Feature / 機能</th><th>說明 / Description / 説明</th></tr>
+    <tr><td>鎖定貼紙<br><span class="en">Lock sticker</span><br><span class="jp">ステッカーロック</span></td>
+        <td>點擊鎖頭 <kbd>🔓</kbd> 可鎖定貼紙（鎖定後不可編輯，且無法被長按垃圾桶刪除）<br><span class="en">Click padlock <kbd>🔓</kbd> to lock (no edit, immune to trash long-press)</span><br><span class="jp">鍵アイコン <kbd>🔓</kbd> をクリックでロック（編集不可、ゴミ箱長押しでも削除されない）</span></td></tr>
+    <tr><td>z-index 鎖定（⚡）<br><span class="en">z-index lock (⚡)</span><br><span class="jp">z-index ロック（⚡）</span></td>
+        <td>長按鎖頭可切換，鎖定後點擊貼紙不會浮到最上層<br><span class="en">Long press padlock to toggle; when locked, clicking sticker won't bring it to front</span><br><span class="jp">鍵アイコンを長押しで切替。ロック中はクリックしても最前面に移動しない</span></td></tr>
+    <tr><td>自由變形模式<br><span class="en">Free Deform mode</span><br><span class="jp">自由変形モード</span></td>
+        <td>選中後，縮放貼紙時可任意拉伸（不保持比例）<br><span class="en">When checked, scaling can stretch non‑proportionally</span><br><span class="jp">チェックすると拡大縮小時に縦横比を固定せず自由に変形</span></td></tr>
+    <tr><td>自由邊界模式<br><span class="en">Free Boundary mode</span><br><span class="jp">自由境界モード</span></td>
+        <td>選中後，縮放及拖拉貼紙都可任意拉伸到畫布外<br><span class="en">When checked, scaling/dragging can extend beyond canvas</span><br><span class="jp">チェックすると拡大縮小・ドラッグでキャンバス外にはみ出せる</span></td></tr>
+    <tr><td>瀏覽器記憶體<br><span class="en">Browser storage</span><br><span class="jp">ブラウザストレージ</span></td>
+        <td>上傳的圖片會自動儲存在 localStorage，重新整理網頁不會消失<br><span class="en">Uploaded images are saved in localStorage, survive page refresh</span><br><span class="jp">アップロード画像はlocalStorageに保存され、ページ更新後も保持</span></td></tr>
 </table>
 
 <hr>
-<p style="color: #666; font-size: 12px;">📌 提示：長按時間皆為 0.15 秒（鎖頭）或 0.95 秒（清空按鈕）</p>
+<p style="color: #666; font-size: 12px;">📌 提示 / Hint / ヒント：長按時間皆為 0.15 秒（鎖頭）或 0.95 秒（清空按鈕）<br>
+<span class="en">Long press duration: 0.15s (padlock) or 0.95s (clear buttons)</span><br>
+<span class="jp">長押し時間：0.15秒（鍵アイコン）または0.95秒（クリアボタン）</span></p>
 </body>
 </html>

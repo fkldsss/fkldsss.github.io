@@ -521,12 +521,34 @@
     100% { transform: rotate(0deg); }
 }
 #mode-toggle-box {
-            position: absolute; bottom: calc(72px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 8px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
+            position: absolute; bottom: calc(58px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 4px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
         }
         #mode-toggle-box.show { opacity: 1; pointer-events: auto; }
 
+.toggle-box {
+    cursor: pointer;
+    padding:  0 1px;
+    line-height: 1;
+    border-radius: 14px;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.toggle-box .toggle-label {
+    font-weight: normal;
+    transition: all 0.2s ease;
+}
+.toggle-box.active .toggle-label {
+    color: #00adb5;
+    font-weight: bold;
+    text-shadow: 0 0 12px rgba(0, 173, 181, 0.3);
+}
+.toggle-box:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
         #boundary-toggle-box {
-            position: absolute; bottom: calc(35px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 8px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
+            position: absolute; bottom: calc(35px + env(safe-area-inset-bottom, 20px)); left: 21px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 4px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
         }
         #boundary-toggle-box.show { opacity: 1; pointer-events: auto; }
         #mode-checkbox { cursor: pointer; accent-color: #00adb5; }
@@ -586,8 +608,8 @@
         }
 .color-handle {
     position: absolute;
-    bottom: calc(87px + env(safe-area-inset-bottom, 33px)); 
-    left: 1px;
+    bottom: calc(101px + env(safe-area-inset-bottom, 33px)); 
+    left: 5px;
     width: 30px;
     height: 30px;
     background: rgba(255, 255, 255, 0.5);
@@ -662,7 +684,7 @@
 <body>
 
 <div id="left-template-panel" class="side-drawer">
-        <div class="panel-title">範本播放器</div>
+        <div class="panel-title" data-i18n="panel_playback">範本播放器</div>
         <div class="clock-control-group">
             <span class="clock-icon">⏰</span>
             <select id="play-duration-select">
@@ -682,7 +704,14 @@
     </div>
 
     <div id="right-command-panel" class="side-drawer">
-        <div class="panel-title">指令中心</div>
+        <div class="panel-title" style="display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative;">
+    <span data-i18n="panel_cmd">指令中心</span>
+    <div style="display: flex; gap: 2px; font-size: 10px; line-height: 1; position: absolute; right: 0;">
+        <span onclick="switchLanguage('zh')" style="cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="中文">🇹🇼</span>
+        <span onclick="switchLanguage('en')" style="cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="English">🇬🇧</span>
+        <span onclick="switchLanguage('ja')" style="cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="日本語">🇯🇵</span>
+    </div>
+</div>
         <div class="icon-btn-grid">
             <div class="icon-btn" onclick="window.templateManager.exportJSONCommands()">
                 <span class="icon">📸</span>
@@ -694,7 +723,7 @@
             </div>
             <div class="icon-btn" id="btn-export-gif" style="grid-column: span 2; background: ##342f36; border-color: #fff;">
                 <span class="icon">🎞️</span>
-                <span class="label">匯出連續 PNG</span>
+                <span class="label" data-i18n="btn_png">匯出連續 PNG</span>
             </div>
         </div>
         <div class="panel-title" style="font-size: 11px; margin-top: 15px; border:none; color:#888;">當前影格 / 導入備份檔(.txt)</div>
@@ -714,19 +743,19 @@
         <p style="font-size: 10px; margin-top: 24px; border:none; color:#888;"><b>動態效果</b> <i>(不納入貼紙)</i></p>
         <div style="margin-top: 10px;">
             <select id="animation-selector" style="width: 100%; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 5px; font-size: 11px;">
-                <option value="none">無特效 (None)</option>
-                <option value="breathing-effect">呼吸 (Breath)</option>
-                <option value="shake-effect">震動 (Shake)</option>
-                <option value="spin-effect">旋轉 (Spin)</option>
-                <option value="blink-effect">閃爍 (Blink)</option>
-                <option value="float-effect">浮動 (Float)</option>
-                <option value="skewx-effect">左右傾斜 (Skew-X)</option>
-                <option value="skewy-effect">上下傾斜 (Skew-Y)</option>
-                <option value="swing-up-down-effect">鐘擺 (Swing)</option>
-                <option value="jump-n-shake-effect">蹦動 (Jump&Shake)</option>
-                <option value="tilt-n-move-shaking-effect">走路 (Tilt&Move)</option>
-                <option value="flip-card-effect">卡牌翻轉 (Flip)</option>
-                <option value="clear-all">清除畫面所有特效</option>
+                <option value="none" data-i18n="anim_none">無特效 (None)</option>
+                <option value="breathing-effect" data-i18n="anim_breath">呼吸 (Breath)</option>
+                <option value="shake-effect" data-i18n="anim_shake">震動 (Shake)</option>
+                <option value="spin-effect" data-i18n="anim_spin">旋轉 (Spin)</option>
+                <option value="blink-effect" data-i18n="anim_blink">閃爍 (Blink)</option>
+                <option value="float-effect" data-i18n="anim_float">浮動 (Float)</option>
+                <option value="skewx-effect" data-i18n="anim_skewx">左右傾斜 (Skew-X)</option>
+                <option value="skewy-effect" data-i18n="anim_skewy">上下傾斜 (Skew-Y)</option>
+                <option value="swing-up-down-effect" data-i18n="anim_swing">鐘擺 (Swing)</option>
+                <option value="jump-n-shake-effect" data-i18n="anim_jump">蹦動 (Jump&Shake)</option>
+                <option value="tilt-n-move-shaking-effect" data-i18n="anim_tilt">走路 (Tilt&Move)</option>
+                <option value="flip-card-effect" data-i18n="anim_flip">卡牌翻轉 (Flip)</option>
+                <option value="clear-all" data-i18n="anim_clear">清除畫面所有特效</option>
             </select>
         </div>
         <!-- ===== 透明度控制  ===== -->
@@ -806,52 +835,61 @@
         
     <button id="delete-btn">🗑️</button>
         
-<div id="mode-toggle-box">
-    <input type="checkbox" id="mode-checkbox">
-    <span style="cursor: pointer; user-select: none;">自由變形</span>
+<div id="mode-toggle-box" class="toggle-box" onclick="toggleMode('mode-checkbox', this)">
+    <input type="checkbox" id="mode-checkbox" style="display: none;">
+    <span class="toggle-label" data-i18n="free_deform">自由變形</span>
 </div>
-<div id="boundary-toggle-box">
-    <input type="checkbox" id="boundary-checkbox">
-    <span style="cursor: pointer; user-select: none;">自由邊界</span>
+<div id="boundary-toggle-box" class="toggle-box" onclick="toggleMode('boundary-checkbox', this)">
+    <input type="checkbox" id="boundary-checkbox" style="display: none;">
+    <span class="toggle-label" data-i18n="free_edge">自由邊界</span>
 </div>
 
     <div id="menu-box">
         <div id="menu-toggle-tab" onclick="toggleMenuManual()">
-            <span id="arrow-icon">🔽</span> <span id="tab-text">拼貼選單</span>
+            <span id="arrow-icon">🔽</span> <span id="tab-text" data-i18n="tab_text">拼貼選單</span>
         </div>
         <div id="category-container">
             <input type="file" id="local-file-input" accept="image/*" style="display: none;" multiple>
-            <button id="btn-local-upload" class="category-btn" style="border-color: #e91e63; color: #e91e63;">📂 上傳</button>
-            <button id="btn-head" class="category-btn" onclick="switchCategory('head', event)">頭部</button>
-            <button id="btn-hair" class="category-btn" onclick="switchCategory('hair', event)">髮型</button>
-            <button id="btn-face" class="category-btn" onclick="switchCategory('face', event)">樣貌</button>
-            <button id="btn-body" class="category-btn" onclick="switchCategory('body', event)">軀體</button>
-            <button id="btn-limbs" class="category-btn" onclick="switchCategory('limbs', event)">肢體</button>
-            <button id="btn-bg" class="category-btn" onclick="switchCategory('bg', event)">背景</button>
-            <button id="btn-text" class="category-btn" onclick="switchCategory('text', event)">文字</button>
-            <button id="btn-drawing" class="category-btn" onclick="switchCategory('drawing', event)">繪製</button>
+            <button id="btn-local-upload" class="category-btn" style="border-color: #e91e63; color: #e91e63;" data-i18n="btn_upload">📂 上傳</button>
+            <button id="btn-head" class="category-btn" onclick="switchCategory('head', event)" data-i18n="cat_head">頭部</button>
+            <button id="btn-hair" class="category-btn" onclick="switchCategory('hair', event)" data-i18n="cat_hair">髮型</button>
+            <button id="btn-face" class="category-btn" onclick="switchCategory('face', event)" data-i18n="cat_face">樣貌</button>
+            <button id="btn-body" class="category-btn" onclick="switchCategory('body', event)" data-i18n="cat_body">軀體</button>
+            <button id="btn-limbs" class="category-btn" onclick="switchCategory('limbs', event)" data-i18n="cat_limbs">肢體</button>
+            <button id="btn-bg" class="category-btn" onclick="switchCategory('bg', event)" data-i18n="cat_bg">背景</button>
+            <button id="btn-text" class="category-btn" onclick="switchCategory('text', event)" data-i18n="cat_text">文字</button>
+            <button id="btn-drawing" class="category-btn" onclick="switchCategory('drawing', event)" data-i18n="cat_drawing">繪製</button>
         </div>
         <div id="thumbnails-container"></div>
     </div>
 
 <script>
 
-document.getElementById('mode-toggle-box').addEventListener('pointerdown', function(e) {
-    e.stopPropagation();    
-    const checkbox = document.getElementById('mode-checkbox');    
-    if (e.target === checkbox) return;
-    e.preventDefault(); 
+function toggleMode(checkboxId, container) {
+    const checkbox = document.getElementById(checkboxId);
+    if (!checkbox) return;
     checkbox.checked = !checkbox.checked;
-    checkbox.dispatchEvent(new Event('change'));
-});
+    if (checkbox.checked) {
+        container.classList.add('active');
+    } else {
+        container.classList.remove('active');
+    }
 
-document.getElementById('boundary-toggle-box').addEventListener('pointerdown', function(e) {
-    e.stopPropagation();    
-    const checkbox = document.getElementById('boundary-checkbox');    
-    if (e.target === checkbox) return;
-    e.preventDefault(); 
-    checkbox.checked = !checkbox.checked;
-});
+    checkbox.dispatchEvent(new Event('change'));
+}
+function syncToggleStyles() {
+    document.querySelectorAll('.toggle-box').forEach(box => {
+        const checkbox = box.querySelector('input[type="checkbox"]');
+        if (checkbox && checkbox.checked) {
+            box.classList.add('active');
+        } else {
+            box.classList.remove('active');
+        }
+    });
+}
+
+// 頁面載入時執行一次
+document.addEventListener('DOMContentLoaded', syncToggleStyles);
 
         const thumbnailsContainer = document.getElementById('thumbnails-container');
         const canvasContainer = document.getElementById('canvas-container');
@@ -861,6 +899,146 @@ document.getElementById('boundary-toggle-box').addEventListener('pointerdown', f
         const menuBox = document.getElementById('menu-box');
         const arrowIcon = document.getElementById('arrow-icon');
                                 
+// ========== 語言切換系統 ==========
+const langData = {
+    zh: {
+        "panel_playback": "範本播放器",
+        "panel_cmd": "指令中心",
+        "menu_title": "拼貼選單",
+        "tab_text": "拼貼選單",
+        "cat_head": "頭部",
+        "cat_hair": "髮型",
+        "cat_face": "樣貌",
+        "cat_body": "軀體",
+        "cat_limbs": "肢體",
+        "cat_bg": "背景",
+        "cat_text": "文字",
+        "cat_drawing": "繪製",
+        "btn_upload": "📂 上傳",
+        "btn_png": "匯出連續 PNG",
+        "btn_import": "⬆ 雙擊匯入指令庫",
+        "btn_file": "📁",
+        "anim_none": "無特效 (None)",
+        "anim_breath": "呼吸 (Breath)",
+        "anim_shake": "震動 (Shake)",
+        "anim_spin": "旋轉 (Spin)",
+        "anim_blink": "閃爍 (Blink)",
+        "anim_float": "浮動 (Float)",
+        "anim_skewx": "左右傾斜 (Skew-X)",
+        "anim_skewy": "上下傾斜 (Skew-Y)",
+        "anim_swing": "鐘擺 (Swing)",
+        "anim_jump": "蹦動 (Jump&Shake)",
+        "anim_tilt": "走路 (Tilt&Move)",
+        "anim_flip": "卡牌翻轉 (Flip)",
+        "anim_clear": "清除畫面所有特效",
+        "alert_select": "請先點選一張貼紙！",
+        "alert_confirm_clear": "⚠️ 確定要一鍵清除畫布上所有「未鎖定」的貼紙嗎？",
+        "free_deform": "自由變形",
+        "free_edge": "自由邊界"
+    },
+    en: {
+        "panel_playback": "Playback Templates",
+        "panel_cmd": "Command Center",
+        "menu_title": "Collage Menu",
+        "tab_text": "Collage Menu",
+        "cat_head": "Head",
+        "cat_hair": "Hair",
+        "cat_face": "Face",
+        "cat_body": "Body",
+        "cat_limbs": "Limbs",
+        "cat_bg": "Background",
+        "cat_text": "Text",
+        "cat_drawing": "Drawing",
+        "btn_upload": "📂 Upload",
+        "btn_png": "Output continuous PNGs",
+        "btn_import": "⬆ Double-click to Import",
+        "btn_file": "📁",
+        "anim_none": "None",
+        "anim_breath": "Breath",
+        "anim_shake": "Shake",
+        "anim_spin": "Spin",
+        "anim_blink": "Blink",
+        "anim_float": "Float",
+        "anim_skewx": "Skew-X",
+        "anim_skewy": "Skew-Y",
+        "anim_swing": "Swing",
+        "anim_jump": "Jump&Shake",
+        "anim_tilt": "Walk",
+        "anim_flip": "Flip",
+        "anim_clear": "Clear All Effects",
+        "alert_select": "Please select a sticker first!",
+        "alert_confirm_clear": "⚠️ Sure to clear all unlocked stickers?",
+        "free_deform": "Free Deform",
+        "free_edge": "Free Edge"
+    },
+    ja: {
+        "panel_playback": "テンプレートプレーヤー",
+        "panel_cmd": "指令センター",
+        "menu_title": "ステッカーメニュー",
+        "tab_text": "ステッカーメニュー",
+        "cat_head": "頭",
+        "cat_hair": "ヘアスタイル",
+        "cat_face": "外観",
+        "cat_body": "体",
+        "cat_limbs": "四肢",
+        "cat_bg": "背景",
+        "cat_text": "絵文字",
+        "cat_drawing": "絵記号",
+        "btn_upload": "📂 アップロード",
+        "btn_png": "連続PNG をエクスポート",
+        "btn_import": "⬆ ファイルインポートコマンドライブラリ",
+        "btn_file": "📁",
+        "anim_none": "効果なし (None)",
+        "anim_breath": "呼吸 (Breath)",
+        "anim_shake": "振動 (Shake)",
+        "anim_spin": "回転 (Spin)",
+        "anim_blink": "瞬き (Blink)",
+        "anim_float": "浮動 (Float)",
+        "anim_skewx": "左右の傾き (Skew-X)",
+        "anim_skewy": "上下の傾き (Skew-Y)",
+        "anim_swing": "振り子 (Swing)",
+        "anim_jump": "飛び跳ね (Jump&Shake)",
+        "anim_tilt": "歩行 (Tilt&Move)",
+        "anim_flip": "カードめくり (Flip)",
+        "anim_clear": "すべての効果を解除する",
+        "alert_select": "まずステッカーをお選びください",
+        "alert_confirm_clear": "⚠️ キャンバス上の「ロック解除済み」ステッカーをすべてワンクリックで削除してもよろしいですか？",
+        "free_deform": "自由変形",
+        "free_edge": "自由エッジ"
+    }
+};
+
+let currentLang = 'zh'; // 預設為中文
+
+// 切換語言的函式
+function switchLanguage(lang) {
+    if (!langData[lang]) return;
+    currentLang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (langData[lang][key]) {
+            el.innerText = langData[lang][key];
+        }
+    });
+    // 特別處理下拉選單 (animation-selector)
+    const sel = document.getElementById('animation-selector');
+    if (sel) {
+        const options = sel.querySelectorAll('option');
+        options.forEach(opt => {
+            const key = opt.getAttribute('data-i18n');
+            if (key && langData[lang][key]) {
+                opt.innerText = langData[lang][key];
+            }
+        });
+    }
+    const tabText = document.getElementById('tab-text');
+    if (tabText) {
+        const key = 'tab_text';
+        if (langData[lang][key]) tabText.innerText = langData[lang][key];
+    }
+}
+// ========== 語言切換系統結束 ==========
+
         let stickerCount = 0;
        window.currentMaxZIndex = 10; 
         let selectedSticker = null;
@@ -1080,7 +1258,7 @@ function startDeleteLongPress(e) {
         isLongPressTriggered = true;
         delBtn.classList.remove('charging');
         
-        const confirmAll = confirm("⚠️ 確定要一鍵清除畫布上所有「未鎖定」的貼紙嗎？");
+        const confirmAll = confirm(langData[currentLang]["alert_confirm_clear"]);
         if (confirmAll) {
             const allStickers = canvasContainer.querySelectorAll('.sticker');
             allStickers.forEach(sticker => {
@@ -1822,7 +2000,7 @@ document.getElementById('animation-selector').addEventListener('change', functio
     }
 
     if (!selectedSticker) {
-        alert("請先點選一張貼紙！");
+        alert(langData[currentLang]["alert_select"]);
         this.value = 'none';
         return;
     }
