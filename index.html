@@ -1270,7 +1270,6 @@ window.createSticker = function createSticker(content, category, isImage) {
         newSticker.style.alignItems = 'center';
         newSticker.style.justifyContent = 'center';
         newSticker.style.containerType = 'inline-size';
-        
         const span = document.createElement('span');
         span.className = 'text-content';
         span.innerText = content;
@@ -1281,20 +1280,18 @@ window.createSticker = function createSticker(content, category, isImage) {
     const screenHeight = window.visualViewport ? window.visualViewport.height : document.documentElement.clientHeight;
     const randomOffset = Math.random() * 20;
 
-// 定位邏輯
-if (category === 'bg') {
+    // ----- 背景分類 -----
+    if (category === 'bg') {
         newSticker.classList.add('bg-sticker');
         newSticker.style.position = 'absolute';
         newSticker.style.zIndex = '1';
         newSticker.style.cursor = 'default';
 
-        // 移除可能殘留的文字
         const textSpan = newSticker.querySelector('span');
         if (textSpan) textSpan.remove();
 
-        // ----- 處理「純色背景」(solid) -----
+        // ----- 純色背景 (solid) -----
         if (content === 'solid') {
-            // 直接鋪滿全螢幕
             newSticker.style.width = '100vw';
             newSticker.style.height = '100vh';
             newSticker.style.left = '0px';
@@ -1303,57 +1300,65 @@ if (category === 'bg') {
             newSticker.classList.add('locked');
             window.clearSelection();
 
-            // 調色盤功能
+            // 調色盤（使用 pointerdown + showPicker）
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
             colorInput.className = 'hidden-color-picker';
-            colorInput.style.display = 'none';
+            colorInput.style.position = 'absolute';
+            colorInput.style.opacity = '0';
+            colorInput.style.pointerEvents = 'none';
+            colorInput.style.width = '0';
+            colorInput.style.height = '0';
+            colorInput.style.border = 'none';
+            colorInput.style.padding = '0';
             colorInput.value = '#ffffff';
+
             const colorBtn = document.createElement('div');
             colorBtn.className = 'color-handle';
             colorBtn.innerHTML = '🎨';
-            colorBtn.onclick = function(e) {
+            colorBtn.addEventListener('pointerdown', function(e) {
                 e.stopPropagation();
-                colorInput.click();
-            };
+                e.preventDefault();
+                if (colorInput.showPicker) {
+                    colorInput.showPicker();
+                } else {
+                    colorInput.click();
+                }
+            });
             colorInput.addEventListener('input', (e) => {
                 newSticker.style.backgroundColor = e.target.value;
             });
+
             newSticker.appendChild(colorBtn);
             newSticker.appendChild(colorInput);
-            
-            // 把純色背景加到畫布
+
             canvasContainer.appendChild(newSticker);
             selectSticker(newSticker);
             return; // solid 處理完畢
         }
 
-        // ----- 處理「圖片背景」 (保持原始比例) -----
+        // ----- 圖片背景 -----
         newSticker.style.backgroundImage = `url('${content}')`;
         newSticker.style.backgroundSize = 'contain';
         newSticker.style.backgroundRepeat = 'no-repeat';
         newSticker.style.backgroundPosition = 'center';
         newSticker.style.backgroundColor = 'rgba(0,0,0,0.05)';
-        
-        // 先給一個臨時尺寸，讓貼紙能立即顯示（等會圖片載入後會重新調整）
+
         newSticker.style.width = '100px';
         newSticker.style.height = '100px';
         newSticker.style.left = (window.innerWidth - 100) / 2 + 'px';
         newSticker.style.top = (window.innerHeight - 100) / 2 + 'px';
 
-        // 先把貼紙加到畫布，這樣點擊縮圖就能馬上看到
         canvasContainer.appendChild(newSticker);
         selectSticker(newSticker);
 
-        // 讀取圖片原始尺寸，並計算適當的初始大小 (盡量放大但完整顯示)
         let img = new Image();
         img.onload = function() {
             const aspect = img.width / img.height;
             const winW = window.innerWidth;
             const winH = window.innerHeight;
             let w, h;
-            // 先以寬度為基準
-            w = winW * 0.9; // 留一點邊距，不貼邊
+            w = winW * 0.9;
             h = w / aspect;
             if (h > winH * 0.9) {
                 h = winH * 0.9;
@@ -1366,27 +1371,26 @@ if (category === 'bg') {
         };
         img.src = content;
 
-        // ----- 建立「縮放手柄」(resize) -----
+        // ----- 手柄 -----
         const resizeHandle = document.createElement('div');
         resizeHandle.className = 'resize-handle';
-        resizeHandle.textContent = '⤡'; 
+        resizeHandle.textContent = '⤡';
         resizeHandle.style.alignItems = 'center';
         resizeHandle.style.justifyContent = 'center';
         resizeHandle.style.fontSize = '12px';
         resizeHandle.style.color = '#fff';
         newSticker.appendChild(resizeHandle);
 
-        // ----- 建立「旋轉手柄」(rotate) -----
         const rotateHandle = document.createElement('div');
         rotateHandle.className = 'rotate-handle';
-        rotateHandle.textContent = '↻'; 
+        rotateHandle.textContent = '↻';
         rotateHandle.style.alignItems = 'center';
         rotateHandle.style.justifyContent = 'center';
         rotateHandle.style.fontSize = '12px';
         rotateHandle.style.color = '#fff';
         newSticker.appendChild(rotateHandle);
 
-        // ----- 建立「鋪滿按鈕」 (短按: 拉伸；長按: 等比完整顯示) -----
+        // ----- 鋪滿按鈕 -----
         const expandBtn = document.createElement('div');
         expandBtn.className = 'expand-handle';
         expandBtn.innerHTML = '⧄';
@@ -1400,7 +1404,6 @@ if (category === 'bg') {
             isExpandLongPress = false;
             expandPressTimer = setTimeout(() => {
                 isExpandLongPress = true;
-                // 長按：等比完整顯示 (contain)
                 const src = newSticker.getAttribute('data-src');
                 if (src) {
                     let tmpImg = new Image();
@@ -1409,7 +1412,6 @@ if (category === 'bg') {
                         const winW = window.innerWidth;
                         const winH = window.innerHeight;
                         let w, h;
-                        // 計算 contain 尺寸：先以寬度填滿，若高度超出則改以高度填滿
                         w = winW;
                         h = w / aspect;
                         if (h > winH) {
@@ -1434,7 +1436,6 @@ if (category === 'bg') {
             e.stopPropagation();
             clearTimeout(expandPressTimer);
             if (!isExpandLongPress) {
-                // 短按：拉伸鋪滿 (變形)
                 newSticker.style.backgroundSize = '100% 100%';
                 newSticker.style.width = '100vw';
                 newSticker.style.height = '100vh';
@@ -1456,40 +1457,41 @@ if (category === 'bg') {
             clearTimeout(expandPressTimer);
         });
 
-        return; // 結束背景分支
-} else {
-        if (category === 'text') {
-            newSticker.style.left = (screenWidth / 2 - 100 + randomOffset) + 'px';
-            newSticker.style.top = (screenHeight / 2 - 30 + randomOffset) + 'px';
-            window.currentMaxZIndex++;
-            newSticker.style.zIndex = window.currentMaxZIndex;
-        } else {
-            newSticker.style.left = (screenWidth / 2 - 60 + randomOffset) + 'px';
-            newSticker.style.top = (screenHeight / 2 - 120 + randomOffset) + 'px';
-            window.currentMaxZIndex++;
-            newSticker.style.zIndex = window.currentMaxZIndex;
-        }
-
-        const handle = document.createElement('div');
-        handle.className = 'resize-handle';
-        handle.textContent = '⤡';
-        handle.style.alignItems = 'center';
-        handle.style.justifyContent = 'center';
-        handle.style.fontSize = '12px';
-        handle.style.color = '#fff';
-        newSticker.appendChild(handle);
-        
-        const rotateHandle = document.createElement('div');
-        rotateHandle.className = 'rotate-handle';
-        rotateHandle.textContent = '↻';
-        rotateHandle.style.alignItems = 'center';
-        rotateHandle.style.justifyContent = 'center';
-        rotateHandle.style.fontSize = '12px';
-        rotateHandle.style.color = '#fff';
-        newSticker.appendChild(rotateHandle);
+        return; // 背景分支結束
     }
 
-    // 調色盤邏輯 (text/drawing)
+    // ----- 非背景貼紙 -----
+    if (category === 'text') {
+        newSticker.style.left = (screenWidth / 2 - 100 + randomOffset) + 'px';
+        newSticker.style.top = (screenHeight / 2 - 30 + randomOffset) + 'px';
+        window.currentMaxZIndex++;
+        newSticker.style.zIndex = window.currentMaxZIndex;
+    } else {
+        newSticker.style.left = (screenWidth / 2 - 60 + randomOffset) + 'px';
+        newSticker.style.top = (screenHeight / 2 - 120 + randomOffset) + 'px';
+        window.currentMaxZIndex++;
+        newSticker.style.zIndex = window.currentMaxZIndex;
+    }
+
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle';
+    handle.textContent = '⤡';
+    handle.style.alignItems = 'center';
+    handle.style.justifyContent = 'center';
+    handle.style.fontSize = '12px';
+    handle.style.color = '#fff';
+    newSticker.appendChild(handle);
+
+    const rotateHandle = document.createElement('div');
+    rotateHandle.className = 'rotate-handle';
+    rotateHandle.textContent = '↻';
+    rotateHandle.style.alignItems = 'center';
+    rotateHandle.style.justifyContent = 'center';
+    rotateHandle.style.fontSize = '12px';
+    rotateHandle.style.color = '#fff';
+    newSticker.appendChild(rotateHandle);
+
+    // 調色盤 (text/drawing)
     if (category === 'text' || category === 'drawing') {
         const paletteBtn = document.createElement('div');
         paletteBtn.className = 'palette-handle';
@@ -1497,12 +1499,33 @@ if (category === 'bg') {
         const colorInput = document.createElement('input');
         colorInput.type = 'color';
         colorInput.className = 'hidden-color-picker';
-        paletteBtn.addEventListener('click', (e) => { e.stopPropagation(); colorInput.click(); });
+        colorInput.style.position = 'absolute';
+        colorInput.style.opacity = '0';
+        colorInput.style.pointerEvents = 'none';
+        colorInput.style.width = '0';
+        colorInput.style.height = '0';
+        colorInput.style.border = 'none';
+        colorInput.style.padding = '0';
+
+        paletteBtn.addEventListener('pointerdown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            if (colorInput.showPicker) {
+                colorInput.showPicker();
+            } else {
+                colorInput.click();
+            }
+        });
+
         colorInput.addEventListener('input', (e) => {
             const targetSpan = newSticker.querySelector('span');
-            if (targetSpan) targetSpan.style.color = e.target.value;
-            else newSticker.style.color = e.target.value;
+            if (targetSpan) {
+                targetSpan.style.color = e.target.value;
+            } else {
+                newSticker.style.color = e.target.value;
+            }
         });
+
         newSticker.appendChild(paletteBtn);
         newSticker.appendChild(colorInput);
     }
@@ -1519,7 +1542,6 @@ if (category === 'bg') {
         }
     });
 };
-
 
 
 function handleStart(e) {
