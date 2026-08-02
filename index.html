@@ -521,7 +521,7 @@
     100% { transform: rotate(0deg); }
 }
 #mode-toggle-box {
-            position: absolute; bottom: calc(58px + env(safe-area-inset-bottom, 20px)); left: 20px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 4px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
+            position: absolute; bottom: calc(58px + env(safe-area-inset-bottom, 20px)); left: 22px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 4px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
         }
         #mode-toggle-box.show { opacity: 1; pointer-events: auto; }
 
@@ -548,7 +548,7 @@
 }
 
         #boundary-toggle-box {
-            position: absolute; bottom: calc(35px + env(safe-area-inset-bottom, 20px)); left: 21px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 4px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
+            position: absolute; bottom: calc(35px + env(safe-area-inset-bottom, 20px)); left: 23px; background: rgba(20, 20, 20, 0.9); border: 2px solid #00adb5; padding: 4px 12px; border-radius: 25px; font-size: 12px; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; -webkit-user-select: none; opacity: 0; pointer-events: none; transition: all 0.2s;
         }
         #boundary-toggle-box.show { opacity: 1; pointer-events: auto; }
         #mode-checkbox { cursor: pointer; accent-color: #00adb5; }
@@ -609,7 +609,7 @@
 .color-handle {
     position: absolute;
     bottom: calc(101px + env(safe-area-inset-bottom, 33px)); 
-    left: 2px;
+    left: 3px;
     width: 30px;
     height: 30px;
     background: rgba(255, 255, 255, 0.5);
@@ -726,12 +726,12 @@
                 <span class="label" data-i18n="btn_png">匯出連續 PNG</span>
             </div>
         </div>
-        <div class="panel-title" style="font-size: 11px; margin-top: 15px; border:none; color:#888;">當前影格 / 導入備份檔(.txt)</div>
-        <textarea id="cmd-json-io" style="background:#222; border:1px solid #444; border-radius:6px; color:#fff; font-size:10px; height:160px; resize:none;" placeholder="在此貼上導出的 .txt 內容..."></textarea>
+        <div class="panel-title" style="font-size: 11px; margin-top: 15px; border:none; color:#888;" data-i18n="current_json_txt">當前影格json / 導入txt檔</div>
+        <textarea id="cmd-json-io" style="background:#222; border:1px solid #444; border-radius:6px; color:#fff; font-size:10px; height:120px; resize:none;" placeholder="在此貼上導出的 .txt 內容..."></textarea>
         
         <!-- 修改區域開始 -->
         <div style="display: flex; gap: 5px; margin-top: 5px;">
-            <button class="btn-action" style="background: #2196F3; font-size:10px; flex: 1; padding: 5px 0;" ondblclick="window.templateManager.importJSONCommands()">
+            <button class="btn-action" style="background: #2196F3; font-size:10px; flex: 1; padding: 5px 0;" data-i18n="btn_import" ondblclick="window.templateManager.importJSONCommands()">
                 ⬆ 雙擊匯入指令庫
             </button>
             <button id="btn-txt-file-trigger" class="btn-action" style="background: #444; font-size:12px; width: 42px; padding: 0;">
@@ -761,7 +761,7 @@
         <!-- ===== 透明度控制  ===== -->
         <div style="margin-top: 10px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.15); padding-top: 2px; padding-bottom: 2px;">
             <!-- 標題列 -->
-            <div id="opacity-toggle-header" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; cursor: pointer; user-select: none; transition: background 0.2s;">
+            <div id="opacity-toggle-header" style="display: flex; justify-content: space-between; align-items: center; padding: 2px 12px; cursor: pointer; user-select: none; transition: background 0.2s;">
                 <span style="font-size: 12px; color: #aaa;">🎭 透明度變更</span>
                 <span id="opacity-toggle-icon" style="font-size: 12px; color: #666; transition: transform 0.3s;">▶</span>
             </div>
@@ -917,6 +917,7 @@ const langData = {
         "btn_upload": "📂 上傳",
         "btn_png": "匯出連續 PNG",
         "btn_import": "⬆ 雙擊匯入指令庫",
+        "current_json_txt": "當前影格json / 導入txt檔",
         "btn_file": "📁",
         "anim_none": "無特效 (None)",
         "anim_breath": "呼吸 (Breath)",
@@ -952,6 +953,7 @@ const langData = {
         "btn_upload": "📂 Upload",
         "btn_png": "Output continuous PNGs",
         "btn_import": "⬆ Double-click to Import",
+        "current_json_txt": "Current frame json / Import txt file",
         "btn_file": "📁",
         "anim_none": "None",
         "anim_breath": "Breath",
@@ -987,6 +989,7 @@ const langData = {
         "btn_upload": "📂 アップロード",
         "btn_png": "連続PNG をエクスポート",
         "btn_import": "⬆ ファイルインポートコマンドライブラリ",
+        "current_json_txt": "現在のフレームのJSON / テキストファイルをインポート",
         "btn_file": "📁",
         "anim_none": "効果なし (None)",
         "anim_breath": "呼吸 (Breath)",
