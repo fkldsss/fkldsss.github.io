@@ -500,6 +500,7 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }      
+
 /* ---- 「全部解鎖」長按特效 ---- */
 #btn-unlock-all.charging {
     background: #e74c3c !important;
@@ -712,7 +713,7 @@
         <span onclick="switchLanguage('ja')" style="cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" title="日本語">🇯🇵</span>
     </div>
 </div>
-        <div class="icon-btn-grid">
+                <div class="icon-btn-grid">
             <div class="icon-btn" onclick="window.templateManager.exportJSONCommands()">
                 <span class="icon">📸</span>
                 <span class="label" id="lbl-gallery">Gallery</span>
@@ -721,16 +722,20 @@
                 <span class="icon">📋</span>
                 <span class="label" id="lbl-copy">Copy</span>
             </div>
-            <div class="icon-btn" id="btn-export-gif" style="grid-column: span 2; background: ##342f36; border-color: #fff;">
+            <div class="icon-btn" id="btn-export-gif" style="border-color: #1c1c1c; height: 52px;">
                 <span class="icon">🎞️</span>
-                <span class="label" data-i18n="btn_png">匯出連續 PNG</span>
+                <span class="label" data-i18n="btn_png" style="display: block; text-align: center; width: 100%;">匯出連續 PNG</span>
+            </div>
+            <div class="icon-btn" id="btn-screen-record" style="border-color: #1c1c1c; height: 52px;">
+                <span class="icon">🎥</span>
+                <span class="label" style="font-size: 11px; display: block; text-align: center; width: 100%;" data-i18n="btn_record">錄製畫面</span>
             </div>
         </div>
-        <div class="panel-title" style="font-size: 11px; margin-top: 15px; border:none; color:#888;" data-i18n="current_json_txt">當前影格json / 導入txt檔</div>
+        <div class="panel-title" style="font-size: 11px; margin-top: 18px; border:none; color:#888;" data-i18n="current_json_txt">當前影格json / 導入txt檔</div>
         <textarea id="cmd-json-io" style="background:#222; border:1px solid #444; border-radius:6px; color:#fff; font-size:10px; height:120px; resize:none;" placeholder="在此貼上導出的 .txt 內容..."></textarea>
         
         <!-- 修改區域開始 -->
-        <div style="display: flex; gap: 5px; margin-top: 5px;">
+        <div style="display: flex; gap: 5px; margin-top: 4px;">
             <button class="btn-action" style="background: #2196F3; font-size:10px; flex: 1; padding: 5px 0;" data-i18n="btn_import" ondblclick="window.templateManager.importJSONCommands()">
                 ⬆ 雙擊匯入指令庫
             </button>
@@ -738,10 +743,9 @@
                 📁
             </button>
         </div>
-        <!-- 修改區域結束 -->
 
         <p style="font-size: 10px; margin-top: 24px; border:none; color:#888;"><b>動態效果</b> <i>(不納入貼紙)</i></p>
-        <div style="margin-top: 10px;">
+        <div style="margin-top: 2px;">
             <select id="animation-selector" style="width: 100%; background: #222; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 5px; font-size: 11px;">
                 <option value="none" data-i18n="anim_none">無特效 (None)</option>
                 <option value="breathing-effect" data-i18n="anim_breath">呼吸 (Breath)</option>
@@ -759,10 +763,10 @@
             </select>
         </div>
         <!-- ===== 透明度控制  ===== -->
-        <div style="margin-top: 10px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.15); padding-top: 2px; padding-bottom: 2px;">
+        <div style="margin-top: 16px; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.15); padding-top: 2px; padding-bottom: 2px;">
             <!-- 標題列 -->
             <div id="opacity-toggle-header" style="display: flex; justify-content: space-between; align-items: center; padding: 2px 12px; cursor: pointer; user-select: none; transition: background 0.2s;">
-                <span style="font-size: 12px; color: #aaa;">🎭 透明度變更</span>
+                <span style="font-size: 12px; color: #aaa;" data-i18n="o-change">🎭 透明度變更</span>
                 <span id="opacity-toggle-icon" style="font-size: 12px; color: #666; transition: transform 0.3s;">▶</span>
             </div>
             <!-- 內容區 -->
@@ -784,7 +788,7 @@
                 <button id="btn-unlock-all" class="btn-action" style="background: #4a3f2d; width: 42px; height: 26px; border-radius: 16px; font-size: 14px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; cursor: pointer; transition: background 0.2s;">
                     <span class="icon-label" style="font-size: 14px;">🔓</span>
                 </button>
-                <span style="font-size: 10px; color: #888; margin-top: 2px; text-align: center; line-height: 1.3; pointer-events: none;">全部解鎖 / 長按清空畫布</span>
+                <span style="font-size: 10px; color: #888; margin-top: 2px; text-align: center; line-height: 1.3; pointer-events: none;" data-i18n="unlock_all">全部解鎖 / 長按清空畫布</span>
             </div>
             <!-- 說明按鈕 -->
             <div style="display: flex; flex-direction: column; align-items: center; flex: 0 0 auto;">
@@ -914,6 +918,7 @@ const langData = {
         "cat_bg": "背景",
         "cat_text": "文字",
         "cat_drawing": "繪製",
+        "btn_record": "錄製畫面",
         "btn_upload": "📂 上傳",
         "btn_png": "匯出連續 PNG",
         "btn_import": "⬆ 雙擊匯入指令庫",
@@ -934,8 +939,10 @@ const langData = {
         "anim_clear": "清除畫面所有特效",
         "alert_select": "請先點選一張貼紙！",
         "alert_confirm_clear": "⚠️ 確定要一鍵清除畫布上所有「未鎖定」的貼紙嗎？",
+        "unlock_all": "全部解鎖 / 長按清空畫布",
         "free_deform": "自由變形",
-        "free_edge": "自由邊界"
+        "free_edge": "自由邊界",
+        "o-change": "透明度變更"
     },
     en: {
         "panel_playback": "Playback Templates",
@@ -950,8 +957,9 @@ const langData = {
         "cat_bg": "Background",
         "cat_text": "Text",
         "cat_drawing": "Drawing",
+        "btn_record": "Record Screen",
         "btn_upload": "📂 Upload",
-        "btn_png": "Output continuous PNGs",
+        "btn_png": "PNGs Export",
         "btn_import": "⬆ Double-click to Import",
         "current_json_txt": "Current frame json / Import txt file",
         "btn_file": "📁",
@@ -970,8 +978,10 @@ const langData = {
         "anim_clear": "Clear All Effects",
         "alert_select": "Please select a sticker first!",
         "alert_confirm_clear": "⚠️ Sure to clear all unlocked stickers?",
+        "unlock_all": "Unlock All / Long press Clear All",
         "free_deform": "Free Deform",
-        "free_edge": "Free Edge"
+        "free_edge": "Free Edge",
+        "o-change": "Change Opacity"
     },
     ja: {
         "panel_playback": "テンプレートプレーヤー",
@@ -986,9 +996,10 @@ const langData = {
         "cat_bg": "背景",
         "cat_text": "絵文字",
         "cat_drawing": "絵記号",
+        "btn_record": "画面録画",
         "btn_upload": "📂 アップロード",
-        "btn_png": "連続PNG をエクスポート",
-        "btn_import": "⬆ ファイルインポートコマンドライブラリ",
+        "btn_png": "PNG連続出力",
+        "btn_import": "⬆ コマンド読み込み",
         "current_json_txt": "現在のフレームのJSON / テキストファイルをインポート",
         "btn_file": "📁",
         "anim_none": "効果なし (None)",
@@ -1006,8 +1017,10 @@ const langData = {
         "anim_clear": "すべての効果を解除する",
         "alert_select": "まずステッカーをお選びください",
         "alert_confirm_clear": "⚠️ キャンバス上の「ロック解除済み」ステッカーをすべてワンクリックで削除してもよろしいですか？",
+        "unlock_all": "すべてロック解除 / すべてクリアを長押し",
         "free_deform": "自由変形",
-        "free_edge": "自由エッジ"
+        "free_edge": "自由エッジ",
+        "o-change": "透明度を変更"
     }
 };
 
@@ -2252,6 +2265,127 @@ document.getElementById('canvas-container').addEventListener('click', function(e
 
     console.log('✅ 浮動鎖頭已獨立綁定，直接使用 window.selectedSticker');
 })();
+
+// ---------- 簡易螢幕錄製 (自動偵測編碼) ----------
+const recordBtn = document.getElementById('btn-screen-record');
+if (recordBtn) {
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isRecording = false;
+    let stream = null;
+
+    function getSupportedMimeType() {
+        const types = [
+            'video/webm;codecs=vp9',
+            'video/webm;codecs=vp8',
+            'video/webm'
+        ];
+        for (let type of types) {
+            if (MediaRecorder.isTypeSupported(type)) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    recordBtn.addEventListener('click', async function() {
+        if (isRecording) {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+            isRecording = false;
+            this.textContent = '🎥 錄製畫面 (WebM)';
+            this.style.background = '#e74c3c';
+            return;
+        }
+
+        // 先設定按鈕狀態，防止重複點擊
+        this.textContent = '⏳ 準備中...';
+        this.style.background = '#555';
+        this.disabled = true;
+
+        try {
+            // 直接調用 getDisplayMedia (不加 alert，避免 user gesture 失效)
+            stream = await navigator.mediaDevices.getDisplayMedia({
+                preferCurrentTab: true,
+                video: { frameRate: 30 },
+                audio: false
+            });
+
+            if (!stream) {
+                // 用戶取消選取，重置按鈕
+                this.textContent = '🎥 錄製畫面 (WebM)';
+                this.style.background = '#e74c3c';
+                this.disabled = false;
+                return;
+            }
+
+            const mimeType = getSupportedMimeType();
+            if (!mimeType) {
+                alert('❌ 瀏覽器不支援 WebM 錄製，請改用 Chrome 或 Edge。');
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                this.textContent = '🎥 錄製畫面 (WebM)';
+                this.style.background = '#e74c3c';
+                this.disabled = false;
+                return;
+            }
+
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
+
+            mediaRecorder.ondataavailable = function(e) {
+                if (e.data.size > 0) recordedChunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = function() {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = '畫布錄影_' + new Date().toISOString().slice(0,19).replace(/:/g,'-') + '.webm';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                recordedChunks = [];
+                recordBtn.textContent = '🎥 錄製畫面 (WebM)';
+                recordBtn.style.background = '#e74c3c';
+                recordBtn.disabled = false;
+                isRecording = false;
+            };
+
+            mediaRecorder.start(1000);
+            isRecording = true;
+            this.textContent = '⏹️ 停止錄製';
+            this.style.background = '#c0392b';
+            this.disabled = false;
+
+            stream.getVideoTracks()[0].addEventListener('ended', function() {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+                recordBtn.textContent = '🎥 錄製畫面 (WebM)';
+                recordBtn.style.background = '#e74c3c';
+                recordBtn.disabled = false;
+                isRecording = false;
+            });
+
+        } catch (err) {
+            alert('❌ 無法啟動錄製：' + err.message);
+            this.textContent = '🎥 錄製畫面 (WebM)';
+            this.style.background = '#e74c3c';
+            this.disabled = false;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+    });
+}
+
 </script>
     <script src="gif-exporter.js"></script>
 </body>
