@@ -942,7 +942,8 @@ const langData = {
         "unlock_all": "全部解鎖 / 長按清空畫布",
         "free_deform": "自由變形",
         "free_edge": "自由邊界",
-        "o-change": "透明度變更"
+        "o-change": "透明度變更",
+        "alert_mobile_record": "📱 手機版瀏覽器不支援網頁內直接錄製螢幕。\n請使用手機內建的「螢幕錄製」功能來錄製動畫播放。"
     },
     en: {
         "panel_playback": "Playback Templates",
@@ -981,7 +982,8 @@ const langData = {
         "unlock_all": "Unlock All / Long press Clear All",
         "free_deform": "Free Deform",
         "free_edge": "Free Edge",
-        "o-change": "Change Opacity"
+        "o-change": "Change Opacity",
+        "alert_mobile_record": "📱 Mobile browsers do not support screen recording from within the webpage.\nPlease use your phone's built-in screen recording feature."
     },
     ja: {
         "panel_playback": "テンプレートプレーヤー",
@@ -1020,7 +1022,8 @@ const langData = {
         "unlock_all": "すべてロック解除 / すべてクリアを長押し",
         "free_deform": "自由変形",
         "free_edge": "自由エッジ",
-        "o-change": "透明度を変更"
+        "o-change": "透明度を変更",
+        "alert_mobile_record": "📱 モバイルブラウザはウェブページからの画面録画に対応していません。\nアニメーション再生を録画するには、スマートフォンに内蔵の「画面録画」機能をご使用ください。"
     }
 };
 
@@ -2289,6 +2292,14 @@ if (recordBtn) {
     }
 
     recordBtn.addEventListener('click', async function() {
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+        alert(langData[currentLang]["alert_mobile_record"]);
+        this.textContent = '🎥 錄製畫面 (WebM)';
+        this.style.background = '#e74c3c';
+        this.disabled = false;
+        return;
+    }
         if (isRecording) {
             if (mediaRecorder && mediaRecorder.state === 'recording') {
                 mediaRecorder.stop();
