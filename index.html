@@ -1515,16 +1515,40 @@ function switchCategory(categoryName, e) {
             const thumbDiv = document.createElement('div');
             thumbDiv.className = 'thumb-item';
 
-            const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(itemText);
+            const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(itemText);
 
             if (isImage) {
-                const img = document.createElement('img');
-                img.src = folderPath + itemText;
-                thumbDiv.appendChild(img);
-                thumbDiv.onclick = function() { 
-                    window.createSticker(folderPath + itemText, categoryName, true); 
-                    window.hideMenuBox(); 
-                };
+    const img = document.createElement('img');
+    img.src = folderPath + itemText;
+    thumbDiv.appendChild(img);
+
+    const isSvg = itemText.toLowerCase().endsWith('.svg');
+    thumbDiv.onclick = function() {
+        if (isSvg) {
+            // 將 SVG 轉為 PNG 再建立貼紙（確保 html2canvas 相容性）
+            const loadImg = new Image();
+            loadImg.onload = function() {
+                const canvas = document.createElement('canvas');
+                const w = loadImg.width || 200;
+                const h = loadImg.height || 200;
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(loadImg, 0, 0, w, h);
+                const pngData = canvas.toDataURL('image/png');
+                window.createSticker(pngData, categoryName, true);
+                window.hideMenuBox();
+            };
+            loadImg.onerror = function() {
+                window.createSticker(folderPath + itemText, categoryName, true);
+                window.hideMenuBox();
+            };
+            loadImg.src = folderPath + itemText;
+        } else {
+            window.createSticker(folderPath + itemText, categoryName, true);
+            window.hideMenuBox();
+        }
+    };
             } else {
                 thumbDiv.classList.add('thumb-text-render');
                 thumbDiv.innerText = itemText;

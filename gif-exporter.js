@@ -1,4 +1,4 @@
-﻿// 一鍵終極版：自動偵測 + 自動修復 + 自動匯出 ZIP
+﻿﻿// 一鍵終極版 v3：單影格直接下載 PNG，多影格才打包 ZIP
 (function() {
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -27,12 +27,11 @@
                 return;
             }
 
-            // ---- 階段 1：掃描並修復本地圖片 ----
+            // ---- 階段 1：掃描並修復本地圖片 (SAMPLES) ----
             const pathsToFix = new Set();
             for (const frame of frames) {
                 for (const sticker of (frame.stickers || [])) {
                     const src = sticker.src || '';
-                    // 判斷是否為本地路徑
                     if (src.startsWith('file://') || src.includes('SAMPLES/') || 
                         (!src.startsWith('data:') && !src.startsWith('http') && src !== '')) {
                         pathsToFix.add(src);
@@ -40,7 +39,6 @@
                 }
             }
 
-            // 如果有需要修復的，執行修復程序
             if (pathsToFix.size > 0) {
                 const pathList = Array.from(pathsToFix).map(p => '• ' + p.split('/').pop()).join('\n');
                 const confirmMsg = '⚠️ 偵測到 ' + pathsToFix.size + ' 張本地圖片需要轉為 Base64。\n\n' +
@@ -49,7 +47,6 @@
                                    '需要的檔案：\n' + pathList;
                 if (!confirm(confirmMsg)) return;
 
-                // 開啟檔案選取器 (允許多選)
                 const dataMap = await new Promise((resolve) => {
                     const input = document.createElement('input');
                     input.type = 'file';
@@ -85,7 +82,6 @@
                     return;
                 }
 
-                // 執行替換
                 let fixedCount = 0;
                 for (const frame of frames) {
                     for (const sticker of (frame.stickers || [])) {
@@ -100,7 +96,6 @@
                     }
                 }
 
-                // 同步更新 savedAggregateList
                 if (manager.savedAggregateList.length > 0) {
                     manager.savedAggregateList = frames;
                 }
@@ -108,43 +103,55 @@
                 alert('✅ 已成功修復 ' + fixedCount + ' 個貼紙圖片！現在開始匯出...');
             }
 
-            // ---- 階段 2：匯出 ZIP（此時所有圖片都已是 Base64） ----
-            alert('📦 開始處理 ' + frames.length + ' 個影格...');
+            // ---- 階段 2：匯出（單張直接 PNG，多張打包 ZIP） ----
+            const total = frames.length;
+
+            // 如果是單一影格，直接截圖並下載 PNG，不產生 ZIP
+            if (total === 1) {
+                // 渲染該影格
+                manager.renderStateToCanvas(frames[0], false);
+                // 等待圖片載入
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                // 截圖
+                const canvas = await html2canvas(container, {
+                    useCORS: true,
+                    allowTaint: true,
+                    scale: 1,
+                    backgroundColor: '#222222',
+                    logging: false,
+                    imageTimeout: 0
+                });
+
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = '影格.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                alert('✅ 匯出完成！已下載「影格.png」');
+                return;
+            }
+
+            // ---- 多個影格：打包成 ZIP ----
+            alert('📦 開始處理 ' + total + ' 個影格...');
 
             const zip = new JSZip();
-            const total = frames.length;
 
             for (let i = 0; i < total; i++) {
                 manager.renderStateToCanvas(frames[i], false);
-
-                const stickers = container.querySelectorAll('.sticker');
-                await Promise.all(Array.from(stickers).map(sticker => {
-                    return new Promise((resolve) => {
-                const bg = sticker.style.backgroundImage;
-                 if (bg && bg !== 'none') {
-            try {
-                const match = bg.match(/url\(['"]?([^'"]*)['"]?\)/);
-                const url = match ? match[1] : null;
-                if (url && url.startsWith('data:')) {
-                    const img = new Image();
-                    img.onload = resolve;
-                    img.onerror = resolve;
-                    img.src = url;
-                    return;
-                }
-            } catch (e) {}
-        }
-        resolve();
-    });
-}));
-await new Promise(resolve => requestAnimationFrame(resolve));
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                await new Promise(resolve => setTimeout(resolve, 300));
 
                 const canvas = await html2canvas(container, {
                     useCORS: true,
-                    allowTaint: false,
+                    allowTaint: true,
                     scale: 1,
-                    backgroundColor: null,
-                    logging: false
+                    backgroundColor: '#222222',
+                    logging: false,
+                    imageTimeout: 0
                 });
 
                 const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
