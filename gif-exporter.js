@@ -116,7 +116,28 @@
 
             for (let i = 0; i < total; i++) {
                 manager.renderStateToCanvas(frames[i], false);
-                await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 150)));
+
+                const stickers = container.querySelectorAll('.sticker');
+                await Promise.all(Array.from(stickers).map(sticker => {
+                    return new Promise((resolve) => {
+                const bg = sticker.style.backgroundImage;
+                 if (bg && bg !== 'none') {
+            try {
+                const match = bg.match(/url\(['"]?([^'"]*)['"]?\)/);
+                const url = match ? match[1] : null;
+                if (url && url.startsWith('data:')) {
+                    const img = new Image();
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                    img.src = url;
+                    return;
+                }
+            } catch (e) {}
+        }
+        resolve();
+    });
+}));
+await new Promise(resolve => requestAnimationFrame(resolve));
 
                 const canvas = await html2canvas(container, {
                     useCORS: true,
